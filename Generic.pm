@@ -9,4 +9,3 @@ Log::Log4perl->init(\q(
 	log4perl.appender.SCREEN.layout = Log::Log4perl::Layout::PatternLayout
 	log4perl.appender.SCREEN.layout.ConversionPattern = %d %l %p: %m%n
 ));
-our $log = Log::Log4perl->get_logger();
