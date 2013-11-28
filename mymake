@@ -1,0 +1,18 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings FATAL => qw( all );
+use POSIX qw(strftime); 
+
+open(M, ">make.log"); print M strftime("%F %02H:%02M:%S ", localtime), "START MAKE\n"; close(M);
+my $cmd = "make ".join(" ", @ARGV)." -w 2>&1 | tee -a make.log"; 
+system($cmd) == 0 or die "Error running make: $cmd\n";
+open(M, ">>make.log"); print M strftime("%F %02H:%02M:%S ", localtime), "STOP MAKE\n"; close(M);
+
+system("cat make.log >> make.log.all");
+
+print "--------------------------------------------------------------------------------------------------------\n";
+system("cat make.log | grep -i warning | grep -v '| ERRORS | WARNINGS ]'");
+
+print "--------------------------------------------------------------------------------------------------------\n";
+system("cat make.log | grep -i error | grep -v '| ERRORS | WARNINGS ]'");
