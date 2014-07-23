@@ -2,7 +2,7 @@
 htseq: $(foreach S, $(SAMPLES), htseq/$S.count)
 
 htseq/%.count: gsnap/%.gsnap.filtered.bam ~/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.no-rRNA.gtf.gz
-	~/tools/HTSeq-0.6.1/scripts/htseq-count -f bam -t exon -s no $< ~/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.no-rRNA.gtf.gz 2>&1 1>$@.part | $(LOG)
+	~/tools/HTSeq-0.6.1/scripts/htseq-count -f bam -t exon -s no $< ~/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.no-rRNA.gtf.gz | grep -vP "^__" > $@.part
 	mv $@.part $@
 
 htseq/coverage-saturation-curve.pdf: $(foreach S, $(SAMPLES), htseq/$S.subsamples.count) ~/generic/scripts/plot_saturation_curve.R
