@@ -2,7 +2,6 @@
 qc: $(foreach S, $(SAMPLES), qc/$S.samtools.flagstat) \
     qc/allpatients.stats.pdf \
     qc/allpatients.geneBodyCoverage.pdf \
-    qc/allpatients.DupRate_plot.pdf \
     qc/allpatients.read-distribution.txt \
     qc/allpatients.splice_junction.pdf \
     qc/allpatients.splicing_events.pdf \
@@ -10,7 +9,7 @@ qc: $(foreach S, $(SAMPLES), qc/$S.samtools.flagstat) \
     qc/allpatients.read-quality.pdf \
     qc/allpatients.read-NVC.pdf
 
-RSEQC=PYTHONPATH=/home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages ~/tools/RSeQC-2.3.9/bin/
+PYTHONPATH=/home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages
 
 # ---
 
@@ -59,7 +58,7 @@ qc/allpatients.geneBodyCoverage.pdf: $(foreach S, $(SAMPLES), qc/$S.geneBodyCove
 	mv $@.part $@
 
 qc/%.geneBodyCoverage.pdf: gsnap/%.gsnap.filtered.bam ~/generic/data/rseqc/hg19_Ensembl.bed
-	flock -x .lock ~/tools/RSeQC-2.3.9/bin/geneBody_coverage.py -i $< -r ~/generic/data/rseqc/hg19_Ensembl.bed -o qc/$*
+	PYTHONPATH=$(PYTHONPATH) flock -x .lock ~/tools/RSeQC-2.3.9/bin/geneBody_coverage.py -i $< -r ~/generic/data/rseqc/hg19_Ensembl.bed -o qc/$*
 
 # ---
 
@@ -68,7 +67,7 @@ qc/allpatients.DupRate_plot.pdf: $(foreach S, $(SAMPLES), qc/$S.DupRate_plot.pdf
 	mv $@.part $@
 
 qc/%.DupRate_plot.pdf: gsnap/%.gsnap.filtered.bam
-	flock -x .lock ~/tools/RSeQC-2.3.9/bin/read_duplication.py -i $< -o qc/$*
+	PYTHONPATH=$(PYTHONPATH) flock -x .lock ~/tools/RSeQC-2.3.9/bin/read_duplication.py -i $< -o qc/$*
 
 # ---
 
@@ -78,7 +77,7 @@ qc/allpatients.read-distribution.txt: $(foreach S, $(SAMPLES), qc/$S.read-distri
 	mv $@.part $@
 
 qc/%.read-distribution.txt: gsnap/%.gsnap.filtered.bam ~/generic/data/rseqc/hg19_Ensembl.bed
-	flock -x .lock ~/tools/RSeQC-2.3.9/bin/read_distribution.py -i $< -r ~/generic/data/rseqc/hg19_Ensembl.bed > $@.part
+	PYTHONPATH=$(PYTHONPATH) flock -x .lock ~/tools/RSeQC-2.3.9/bin/read_distribution.py -i $< -r ~/generic/data/rseqc/hg19_Ensembl.bed > $@.part
 	mv $@.part $@
 
 # ---
@@ -88,7 +87,7 @@ qc/allpatients.read-quality.pdf: $(foreach S, $(SAMPLES), qc/$S.read-quality.pdf
 	mv $@.part $@
 
 qc/%.read-quality.pdf: gsnap/%.gsnap.bam 
-	samtools view -hbF 256 $< | $(RSEQC)/read_quality.py -i /dev/stdin -o qc/$*
+	samtools view -hbF 256 $< | PYTHONPATH=$(PYTHONPATH) ~/tools/RSeQC-2.3.9/bin/read_quality.py -i /dev/stdin -o qc/$*
 	mv qc/$*.qual.boxplot.pdf $@
 
 # ---
@@ -98,7 +97,7 @@ qc/allpatients.read-NVC.pdf: $(foreach S, $(SAMPLES), qc/$S.read-NVC.pdf)
 	mv $@.part $@
 
 qc/%.read-NVC.pdf: gsnap/%.gsnap.bam 
-	samtools view -hbF 256 $< | $(RSEQC)/read_NVC.py -x -i /dev/stdin -o qc/$* -s $*
+	samtools view -hbF 256 $< | PYTHONPATH=$(PYTHONPATH) ~/tools/RSeQC-2.3.9/bin/read_NVC.py -x -i /dev/stdin -o qc/$* -s $*
 	mv qc/$*.NVC_plot.pdf $@
 
 # ---
@@ -112,7 +111,7 @@ qc/allpatients.splicing_events.pdf: $(foreach S, $(SAMPLES), qc/$S.splice_events
 	mv $@.part $@
 
 qc/%.splice_events.pdf qc/%.splice_junction.pdf: gsnap/%.gsnap.filtered.bam ~/generic/data/rseqc/hg19_Ensembl.bed
-	~/tools/RSeQC-2.3.9/bin/junction_annotation.py -i $< -r ~/generic/data/rseqc/hg19_Ensembl.bed -o qc/$*
+	PYTHONPATH=$(PYTHONPATH) ~/tools/RSeQC-2.3.9/bin/junction_annotation.py -i $< -r ~/generic/data/rseqc/hg19_Ensembl.bed -o qc/$*
 
 # ---
 
@@ -122,6 +121,6 @@ qc/allpatients.infer_experiment.txt: $(foreach S, $(SAMPLES), qc/$S.infer_experi
 	mv $@.part $@
 
 qc/%.infer_experiment.txt: gsnap/%.gsnap.filtered.bam ~/generic/data/rseqc/hg19_Ensembl.bed
-	~/tools/RSeQC-2.3.9/bin/infer_experiment.py -i $< -r ~/generic/data/rseqc/hg19_Ensembl.bed > $@.part
+	PYTHONPATH=$(PYTHONPATH) ~/tools/RSeQC-2.3.9/bin/infer_experiment.py -i $< -r ~/generic/data/rseqc/hg19_Ensembl.bed > $@.part
 	mv $@.part $@
 

@@ -22,6 +22,7 @@ gsnap: $(foreach S, $(SAMPLES), gsnap/$S.gsnap.bam)
 # cat g1k_v37.splicesites | ~/tools/gmap-2014-05-15/bin/iit_store -o g1k_v37_etv6runx1.maps/g1k_v37.splicesites
 
 # serialize gsnap runs with flock because they take a LOT of memory
+# --novelsplicing=1 increases number of uniquely mapped protein-coding reads by only ~500 per sample
 gsnap/%.gsnap.bam: $(PROJECT_HOME)/data/bam/%.bam
 	flock -x .lock ~/tools/gmap-2014-05-15/src/gsnap \
 			--db=g1k_v37_etv6runx1 \
@@ -38,7 +39,7 @@ gsnap/%.gsnap.bam: $(PROJECT_HOME)/data/bam/%.bam
 			--use-splicing=g1k_v37.splicesites \
 			--use-snps=g1k_v37.snp138 \
 			--genome-unk-mismatch=0 \
-			<(java -jar ~/tools/picard-tools-1.114/SamToFastq.jar VALIDATION_STRINGENCY=SILENT INPUT=$< FASTQ=/dev/stdout) \
+			<(java -jar ~/tools/picard-tools-1.114/SamToFastq.jar VALIDATION_STRINGENCY=SILENT INPUT=$< FASTQ=/dev/stdout | ~/tools/fastx_toolkit-0.0.14/bin/fastx_trimmer -f $(TRIM_BEFORE_BASE)) \
 		| ~/tools/samtools-0.1.19/samtools view -Shb - \
 		| ~/tools/samtools-0.1.19/samtools sort -m 1000000000 - $@ \
 		2>&1 | $(LOG)

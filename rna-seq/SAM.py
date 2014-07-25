@@ -3015,9 +3015,11 @@ class ParseBAM:
 		RS.close()
 		#self.f.seek(0)
 
-	def readsQual_boxplot(self,outfile,shrink=1000, q_cut=30):
+	def readsQual_boxplot(self,outfile,shrink=1000, q_cut=30, sample=""):
 		'''calculate phred quality score for each base in read (5->3)'''
 
+		if not sample:
+			sample=os.path.basename(outfile)
 		output = outfile + ".qual.r"
 		FO=open(output,'w')
 
@@ -3070,7 +3072,7 @@ class ParseBAM:
 		print >>FO, "pdf(\'%s\')" % (outfile + ".qual.boxplot.pdf")
 		for i in sorted(i_box):
 			print >>FO,'p'+str(i) + '<-' + i_box[i]
-		print >>FO, 'boxplot(' + ','.join(['p'+str(i) for i in i_box]) + ',xlab=\"Position of Read(5\'->3\')\",ylab=\"Phred Quality Score\",outline=F' + ')'
+		print >>FO, 'boxplot(' + ','.join(['p'+str(i) for i in i_box]) + ',ylim=c(0,40),xlab=\"Position of Read(5\'->3\')\",ylab=\"Phred Quality Score\",outline=F' + ',main=\"' + sample + '\")'
 		print >>FO,"dev.off()"
 		
 		
@@ -3253,7 +3255,7 @@ class ParseBAM:
 		print >>ROUT, 'plot(read_pos,1-(count/%d),col="blue",main="clipping profile",xlab="Position of reads",ylab="Mappability",type="b")' % total_read
 		print >>ROUT, "dev.off()"
 
-	def coverageGeneBody(self,refbed,outfile):
+	def coverageGeneBody(self,refbed,outfile,sample=""):
 		'''Calculate reads coverage over gene body, from 5'to 3'. each gene will be equally divided
 		into 100 regsions'''
 		if refbed is None:
@@ -3261,6 +3263,9 @@ class ParseBAM:
 			exit(0)
 		OUT1 = open(outfile + ".geneBodyCoverage_plot.r",'w')
 		OUT2 = open(outfile + ".geneBodyCoverage.txt",'w')
+
+		if not sample:
+			sample=os.path.basename(outfile)
 
 		ranges={}
 		totalReads=0
@@ -3343,7 +3348,7 @@ class ParseBAM:
 		print >>OUT1, "pdf(\'%s\')" % (outfile + ".geneBodyCoverage.pdf")
 		print >>OUT1, "x=0:100"
 		print >>OUT1, "y=c(" + ','.join(y_coord) + ')'
-		print >>OUT1, "plot(x,y,xlab=\"percentile of gene body (5'->3')\",ylab='read number',type='s')"
+		print >>OUT1, "plot(x,y,xlab=\"percentile of gene body (5'->3')\",ylab='read number',type='s',main='%s')" % sample
 		print >>OUT1, "dev.off()"
 					
 	def mRNA_inner_distance(self,outfile,refbed,low_bound=0,up_bound=1000,step=10,sample_size=1000000, q_cut=30):
@@ -3484,10 +3489,13 @@ class ParseBAM:
 		RS.close()
 		#self.f.seek(0)
 
-	def annotate_junction(self,refgene,outfile,min_intron=50, q_cut=30):
+	def annotate_junction(self,refgene,outfile,min_intron=50, q_cut=30,sample=None):
 		'''Annotate splicing junctions in BAM or SAM file. Note that a (long) read might have multiple splicing
 		events  (splice multiple times), and the same splicing events can be consolidated into a single
 		junction'''
+		
+		if not sample:
+			sample=os.path.basename(outfile)
 		
 		out_file = outfile + ".junction.xls"
 		out_file2 = outfile + ".junction_plot.r"
@@ -3570,7 +3578,7 @@ class ParseBAM:
 		
 		print >>ROUT, 'pdf(\"%s\")' % (outfile + ".splice_events.pdf")
 		print >>ROUT, "events=c(" + ','.join([str(i*100.0/total_junc) for i in (novel3or5_junc,novel35_junc,known_junc)])+ ')'
-		print >>ROUT, 'pie(events,col=c(2,3,4),init.angle=30,angle=c(60,120,150),density=c(70,70,70),main="splicing events",labels=c("partial_novel %d%%","complete_novel %d%%","known %d%%"))' % (round(novel3or5_junc*100.0/total_junc),round(novel35_junc*100.0/total_junc),round(known_junc*100.0/total_junc))
+		print >>ROUT, 'pie(events,col=c(2,3,4),init.angle=30,angle=c(60,120,150),density=c(70,70,70),main="splicing events\n%s",labels=c("partial_novel %d%%","complete_novel %d%%","known %d%%"))' % (sample, round(novel3or5_junc*100.0/total_junc),round(novel35_junc*100.0/total_junc),round(known_junc*100.0/total_junc))
 		print >>ROUT, "dev.off()"
 		
 		print >>sys.stderr, "\n==================================================================="
@@ -3613,7 +3621,7 @@ class ParseBAM:
 		
 		print >>ROUT, 'pdf(\"%s\")' % (outfile + ".splice_junction.pdf")
 		print >>ROUT, "junction=c(" + ','.join([str(i*100.0/total_junc) for i in (novel3or5_junc,novel35_junc,known_junc,)])+ ')'
-		print >>ROUT, 'pie(junction,col=c(2,3,4),init.angle=30,angle=c(60,120,150),density=c(70,70,70),main="splicing junctions",labels=c("partial_novel %d%%","complete_novel %d%%","known %d%%"))' % (round(novel3or5_junc*100.0/total_junc),round(novel35_junc*100.0/total_junc),round(known_junc*100.0/total_junc))
+		print >>ROUT, 'pie(junction,col=c(2,3,4),init.angle=30,angle=c(60,120,150),density=c(70,70,70),main="splicing junctions\n%s",labels=c("partial_novel %d%%","complete_novel %d%%","known %d%%"))' % (sample, round(novel3or5_junc*100.0/total_junc),round(novel35_junc*100.0/total_junc),round(known_junc*100.0/total_junc))
 		print >>ROUT, "dev.off()"
 		#print >>ROUT, "mat=matrix(c(events,junction),byrow=T,ncol=3)"
 		#print >>ROUT, 'barplot(mat,beside=T,ylim=c(0,100),names=c("known","partial\nnovel","complete\nnovel"),legend.text=c("splicing events","splicing junction"),ylab="Percent")'
