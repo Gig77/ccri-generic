@@ -24,6 +24,7 @@ gsnap: $(foreach S, $(SAMPLES), gsnap/$S.gsnap.bam)
 # serialize gsnap runs with flock because they take a LOT of memory
 # --novelsplicing=1 increases number of uniquely mapped protein-coding reads by only ~500 per sample
 gsnap/%.gsnap.bam: $(PROJECT_HOME)/data/bam/%.bam
+	mkdir -p gsnap
 	flock -x .lock ~/tools/gmap-2014-05-15/src/gsnap \
 			--db=g1k_v37_etv6runx1 \
 			--dir=/data/christian/chrisi/data/current/gsnap/g1k_v37_etv6runx1 \

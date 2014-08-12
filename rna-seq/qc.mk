@@ -11,9 +11,23 @@ qc: $(foreach S, $(SAMPLES), qc/$S.samtools.flagstat) \
 
 PYTHONPATH=/home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages
 
+# installation RSeQC
+#mkdir -p /home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages
+#PYTHONPATH=/home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages python setup.py install --prefix=/home/STANNANET/christian.frech/tools/RSeQC-2.3.9
+#cd ~/tools/RSeQC-2.3.9/lib/python2.7/site-packages/RSeQC-2.3.9-py2.7-linux-x86_64.egg
+#rm csamtools.* rm ctabix.* cvcf.* TabProxies.* # delete pysam/samtools libs shipped with RSeQC to use newer ones installed system-wide
+#rm -rf pysam
+
 # ---
 
+# copy patched version of SAM.py to python path
+/home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages/RSeQC-2.3.9-py2.7-linux-x86_64.egg/qcmodule/SAM.py: ~/generic/scripts/rna-seq/SAM.py
+	cp $< $@
+
+# ---
+	
 qc/%.samtools.flagstat: gsnap/%.gsnap.bam
+	mkdir -p qc
 	samtools flagstat $< 2>&1 1>$@.part | $(LOG)
 	mv $@.part $@
 
@@ -40,6 +54,7 @@ qc/allpatients.stats.txt: $(foreach S, $(SAMPLES), qc/$S.stats.txt)
 	mv $@.part $@ 
 
 qc/%.stats.txt: gsnap/%.gsnap.bam $(PROJECT_HOME)/data/bam/%.bam ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.all.exons.bed ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.all-minus-rRNA.exons.bed ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.protein_coding.exons.bed
+	mkdir -p qc
 	echo -ne $*"\t" > $@.part 
 	echo -ne `samtools view -c $(PROJECT_HOME)/data/bam/$*.bam`"\t" >> $@.part  # total reads
 	echo -ne `samtools view -c -F 512 $(PROJECT_HOME)/data/bam/$*.bam`"\t" >> $@.part  # pass filter (PF)
@@ -58,6 +73,7 @@ qc/allpatients.geneBodyCoverage.pdf: $(foreach S, $(SAMPLES), qc/$S.geneBodyCove
 	mv $@.part $@
 
 qc/%.geneBodyCoverage.pdf: gsnap/%.gsnap.filtered.bam ~/generic/data/rseqc/hg19_Ensembl.bed
+	mkdir -p qc
 	PYTHONPATH=$(PYTHONPATH) flock -x .lock ~/tools/RSeQC-2.3.9/bin/geneBody_coverage.py -i $< -r ~/generic/data/rseqc/hg19_Ensembl.bed -o qc/$*
 
 # ---
@@ -66,7 +82,8 @@ qc/allpatients.DupRate_plot.pdf: $(foreach S, $(SAMPLES), qc/$S.DupRate_plot.pdf
 	gs -dBATCH -dNOPAUSE -q -dAutoRotatePages=/None -sDEVICE=pdfwrite -sOutputFile=$@.part $^
 	mv $@.part $@
 
-qc/%.DupRate_plot.pdf: gsnap/%.gsnap.filtered.bam
+qc/%.DupRate_plot.pdf: gsnap/%.gsnap.filtered.bam /home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages/RSeQC-2.3.9-py2.7-linux-x86_64.egg/qcmodule/SAM.py
+	mkdir -p qc
 	PYTHONPATH=$(PYTHONPATH) flock -x .lock ~/tools/RSeQC-2.3.9/bin/read_duplication.py -i $< -o qc/$*
 
 # ---
@@ -76,7 +93,8 @@ qc/allpatients.read-distribution.txt: $(foreach S, $(SAMPLES), qc/$S.read-distri
 	for S in $^ ; do echo $$S >> $@.part; cat $$S >> $@.part ; done
 	mv $@.part $@
 
-qc/%.read-distribution.txt: gsnap/%.gsnap.filtered.bam ~/generic/data/rseqc/hg19_Ensembl.bed
+qc/%.read-distribution.txt: gsnap/%.gsnap.filtered.bam ~/generic/data/rseqc/hg19_Ensembl.bed /home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages/RSeQC-2.3.9-py2.7-linux-x86_64.egg/qcmodule/SAM.py
+	mkdir -p qc
 	PYTHONPATH=$(PYTHONPATH) flock -x .lock ~/tools/RSeQC-2.3.9/bin/read_distribution.py -i $< -r ~/generic/data/rseqc/hg19_Ensembl.bed > $@.part
 	mv $@.part $@
 
@@ -86,8 +104,9 @@ qc/allpatients.read-quality.pdf: $(foreach S, $(SAMPLES), qc/$S.read-quality.pdf
 	gs -dBATCH -dNOPAUSE -q -dAutoRotatePages=/None -sDEVICE=pdfwrite -sOutputFile=$@.part $^
 	mv $@.part $@
 
-qc/%.read-quality.pdf: gsnap/%.gsnap.bam 
-	samtools view -hbF 256 $< | PYTHONPATH=$(PYTHONPATH) ~/tools/RSeQC-2.3.9/bin/read_quality.py -i /dev/stdin -o qc/$*
+qc/%.read-quality.pdf: gsnap/%.gsnap.bam /home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages/RSeQC-2.3.9-py2.7-linux-x86_64.egg/qcmodule/SAM.py
+	mkdir -p qc
+	samtools view -hF 256 $< | PYTHONPATH=$(PYTHONPATH) ~/tools/RSeQC-2.3.9/bin/read_quality.py -i /dev/stdin -o qc/$*
 	mv qc/$*.qual.boxplot.pdf $@
 
 # ---
@@ -96,8 +115,9 @@ qc/allpatients.read-NVC.pdf: $(foreach S, $(SAMPLES), qc/$S.read-NVC.pdf)
 	gs -dBATCH -dNOPAUSE -q -dAutoRotatePages=/None -sDEVICE=pdfwrite -sOutputFile=$@.part $^
 	mv $@.part $@
 
-qc/%.read-NVC.pdf: gsnap/%.gsnap.bam 
-	samtools view -hbF 256 $< | PYTHONPATH=$(PYTHONPATH) ~/tools/RSeQC-2.3.9/bin/read_NVC.py -x -i /dev/stdin -o qc/$* -s $*
+qc/%.read-NVC.pdf: gsnap/%.gsnap.bam /home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages/RSeQC-2.3.9-py2.7-linux-x86_64.egg/qcmodule/SAM.py
+	mkdir -p qc
+	samtools view -hF 256 $< | PYTHONPATH=$(PYTHONPATH) ~/tools/RSeQC-2.3.9/bin/read_NVC.py -x -i /dev/stdin -o qc/$* -s $*
 	mv qc/$*.NVC_plot.pdf $@
 
 # ---
@@ -110,7 +130,8 @@ qc/allpatients.splicing_events.pdf: $(foreach S, $(SAMPLES), qc/$S.splice_events
 	gs -dBATCH -dNOPAUSE -q -dAutoRotatePages=/None -sDEVICE=pdfwrite -sOutputFile=$@.part $^
 	mv $@.part $@
 
-qc/%.splice_events.pdf qc/%.splice_junction.pdf: gsnap/%.gsnap.filtered.bam ~/generic/data/rseqc/hg19_Ensembl.bed
+qc/%.splice_events.pdf qc/%.splice_junction.pdf: gsnap/%.gsnap.filtered.bam ~/generic/data/rseqc/hg19_Ensembl.bed /home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages/RSeQC-2.3.9-py2.7-linux-x86_64.egg/qcmodule/SAM.py
+	mkdir -p qc
 	PYTHONPATH=$(PYTHONPATH) ~/tools/RSeQC-2.3.9/bin/junction_annotation.py -i $< -r ~/generic/data/rseqc/hg19_Ensembl.bed -o qc/$*
 
 # ---
@@ -120,7 +141,8 @@ qc/allpatients.infer_experiment.txt: $(foreach S, $(SAMPLES), qc/$S.infer_experi
 	for S in $^ ; do echo $$S >> $@.part; cat $$S >> $@.part ; done
 	mv $@.part $@
 
-qc/%.infer_experiment.txt: gsnap/%.gsnap.filtered.bam ~/generic/data/rseqc/hg19_Ensembl.bed
+qc/%.infer_experiment.txt: gsnap/%.gsnap.filtered.bam ~/generic/data/rseqc/hg19_Ensembl.bed /home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages/RSeQC-2.3.9-py2.7-linux-x86_64.egg/qcmodule/SAM.py
+	mkdir -p qc
 	PYTHONPATH=$(PYTHONPATH) ~/tools/RSeQC-2.3.9/bin/infer_experiment.py -i $< -r ~/generic/data/rseqc/hg19_Ensembl.bed > $@.part
 	mv $@.part $@
 

@@ -2,6 +2,7 @@
 htseq: $(foreach S, $(SAMPLES), htseq/$S.count)
 
 htseq/%.count: gsnap/%.gsnap.filtered.bam ~/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.no-rRNA.gtf.gz
+	mkdir -p htseq
 	~/tools/HTSeq-0.6.1/scripts/htseq-count -f bam -t exon -s no $< ~/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.no-rRNA.gtf.gz | grep -vP "^__" > $@.part
 	mv $@.part $@
 

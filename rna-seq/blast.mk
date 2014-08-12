@@ -2,6 +2,7 @@
 blast: $(foreach S, $(SAMPLES), blast/$S.unmapped-reads.species-hits.tsv)
 
 blast/%.unmapped-reads.species-hits.tsv: gsnap/%.gsnap.bam ~/tools/ncbi-blast-2.2.29+/db ~/tools/ncbi-blast-2.2.29+/bin/blastn
+	mkdir -p blast
 	-~/tools/samtools-0.1.19/samtools view -f 4 -s 22.01 $< \
 		| head -200 \
 		| awk '{OFS="\t"; print ">"$$1"\n"$$10}' - \
