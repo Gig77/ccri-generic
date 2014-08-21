@@ -11,8 +11,8 @@ target <- GRanges(seqname = target.df[, 1], IRanges(start = target.df[,2] + 1, e
 counts <- RangedData(space = seqnames(target), ranges = ranges(target))
 
 for (i in 1:length(bam.files)) {
-	counts[[sample.names[i]]] <- countBamInGRanges(bam.files[i], target)
+	counts[[sample.names[i]]] <- countBamInGRanges(bam.files[i], target, read.width=100, remove.dup=FALSE)
 }
 
-save(counts, file="~/exomeCopy/results/counts.p2ry8.RData")
+save(counts, file="~/p2ry8-crlf2/results/exomeCopy/counts.p2ry8.RData")
 

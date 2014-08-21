@@ -6,7 +6,7 @@ option_list <- list(
 		make_option("--sample", type="character", help="sample name")
 		)
 opt <- parse_args(OptionParser(option_list=option_list))
-#opt <- data.frame(sample="SB36C")
+#opt <- data.frame(sample="SB36C", stringsAsFactors=F)
 
 if (invalid(opt$sample)) stop("sample not specified")
 
@@ -65,28 +65,46 @@ fit.all.1 <- exomeCopy(counts.combined.1["1"], opt$sample, X.names = c("log.bg",
 fit.all.2 <- exomeCopy(counts.combined.2["2"], opt$sample, X.names = c("log.bg", "GC", "GC.sq", "width"), S = 0:6, d = 2)
 
 # split into chromosomes again
-fit.split <- list()
+fit <- list()
+fit[[opt$sample]] <- list()
 fit.rest <- fit.all.1
 for (chr in c("1", "3", "5", "7", "9", "11", "13", "15", "17", "19", "21", "Y")) {
 	splitted <- split_fit(fit.rest, chr, max(end(counts[chr])))
-	fit.split[[chr]] <- splitted[[1]]
+	fit[[opt$sample]][[chr]] <- splitted[[1]]
 	fit.rest <- splitted[[2]] 
 }
 fit.rest <- fit.all.2
 for (chr in c("2", "4", "6", "8", "10", "12", "14", "16", "18", "20", "22", "X")) {
 	splitted <- split_fit(fit.rest, chr, max(end(counts[chr])))
-	fit.split[[chr]] <- splitted[[1]]
+	fit[[opt$sample]][[chr]] <- splitted[[1]]
 	fit.rest <- splitted[[2]] 
 }
 
 # plot results
-pdf(paste0(opt$sample, ".combined.tri21adj.pdf"), width=15, height=7)
+pdf(paste0(opt$sample, ".combined.pdf"), width=15, height=7)
 for (chr in c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y")) {
-	plot(fit.split[[chr]], main=chr, cex=0.2, ylim=c(0, 6), xlab='', ylab='', cex.main=2, cex.axis=1, col=c("red", "orange", "gray", "deepskyblue", "blue", "blue2", "blue4")) 
+	plot(fit[[opt$sample]][[chr]], main=chr, cex=0.2, ylim=c(0, 6), xlab='', ylab='', cex.main=2, cex.axis=1, col=c("red", "orange", "gray", "deepskyblue", "blue", "blue2", "blue4")) 
 }
 dev.off()
 
-# write segments
-compiled.segments <- compileCopyCountSegments(fit.split)
+# get compiled segments
+compiled.segments <- compileCopyCountSegments(fit)
+compiled.segments$genes <- as.character(NA)
+
+# annotate segments with overlapping gene names
+if(file.exists("genes.GRCh37v75.biomart.RData")) {
+	load("genes.GRCh37v75.biomart.RData")
+} else {
+	library("biomaRt")
+	mart <- useMart(biomart="ensembl", dataset="hsapiens_gene_ensembl") # GRCh37, v75
+	genes <- getBM(c("hgnc_symbol", "ensembl_gene_id", "chromosome_name", "start_position", "end_position"), mart=mart)
+	save(genes, file="genes.GRCh37v75.biomart.RData")
+}
+gr.genes <- GRanges(seqnames=genes$chromosome_name, ranges=IRanges(start=genes$start_position, end=genes$end_position), names=genes$hgnc_symbol)
+
+o <- findOverlaps(compiled.segments, gr.genes)
+for(i in 1:nrow(compiled.segments)) { gnames <- values(gr.genes[o@subjectHits[o@queryHits==i]])$names; compiled.segments[["genes"]][i] <- paste(gnames[gnames!=""], collapse=",") }
+
+# write table
 write.table(compiled.segments, file=paste0(opt$sample, ".compiled-segments.tsv"), quote=FALSE, sep="\t", row.names=FALSE, col.names=TRUE)
 

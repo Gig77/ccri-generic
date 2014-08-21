@@ -7,14 +7,14 @@ gsnap: $(foreach S, $(SAMPLES), gsnap/$S.gsnap.bam)
 # build GMAP database
 # cd ~/chrisi/data/gsnap
 # ~/tools/gmap-2014-05-15/util/gmap_build -d g1k_v37 ~/generic/data/broad/human_g1k_v37.fasta
-# cat ~/generic/data/broad/human_g1k_v37.fasta ~/chrisi/results/etv6-runx1.breakpoint.fa > ~/chrisi/data/gsnap/human_g1k_v37_etv6runx1.fasta 
-# ~/tools/gmap-2014-05-15/bin/gmap_build --dir=/data/christian/chrisi/data/current/gsnap --db=g1k_v37_etv6runx1 ~/chrisi/data/gsnap/human_g1k_v37_etv6runx1.fasta
+# cat ~/generic/data/broad/human_g1k_v37.fasta ~/chrisi/results/etv6-runx1.breakpoint.fa ~/generic/data/ncbi/NC_001501_moloney_murine_leukemia_virus.fasta > ~/chrisi/data/gsnap/human_g1k_v37_etv6runx1.fasta 
+# ~/tools/gmap-2014-05-15/bin/gmap_build --dir=/data/christian/chrisi/data/current/gsnap --db=g1k_v37_etv6runx1 --circular MT,NC_001501.1 ~/chrisi/data/gsnap/human_g1k_v37_etv6runx1.fasta
 # rm ~/chrisi/data/gsnap/human_g1k_v37_etv6runx1.fasta
 #
 # gunzip -c snp138.txt.gz | ~/tools/gmap-2014-05-15/bin/dbsnp_iit -w 1 > g1k_v37.snp138.txt
 # cd g1k_v37_etv6runx1
 # cat g1k_v37.snp138.txt | ~/tools/gmap-2014-05-15/bin/iit_store -o g1k_v37.snp138
-# ~/tools/gmap-2014-05-15/bin/snpindex -d g1k_v37_etv6runx1 -D g1k_v37_etv6runx1 -v snpfile138
+# ~/tools/gmap-2014-05-15/bin/snpindex -d g1k_v37_etv6runx1 -D g1k_v37_etv6runx1 -v g1k_v37.snp138
 # mv g1k_v37_etv6runx1/g1k_v37.snp138.iit g1k_v37_etv6runx1/g1k_v37_etv6runx1.maps
 
 # for splicesites
