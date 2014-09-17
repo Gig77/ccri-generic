@@ -45,14 +45,20 @@ cds <- estimateSizeFactors(cds)
 #sizeFactors(cds)
 counts.norm <- as.data.frame(counts(cds, normalized=T))
 dds <- DESeq(cds)
-res <- results(dds)
+res <- results(dds, cooksCutoff=FALSE)
 res.df <- as.data.frame(res)
 res.df$id <- rownames(res.df)
 
 # annotate genes with Ensembl biomart
 #---
-mart <- useMart(biomart="ensembl", dataset="hsapiens_gene_ensembl") # GRCh37, v75
-genes <- getGene(res.df$id, "ensembl_gene_id", mart)
+if(file.exists("genes.GRCh37v75.biomart.RData")) {
+	load("~/generic/data/ensembl/genes.GRCh37v75.biomart.RData")
+} else {
+	library("biomaRt")
+	mart <- useMart(biomart="ensembl", dataset="hsapiens_gene_ensembl") # GRCh37, v75
+	genes <- getGene(res.df$id, "ensembl_gene_id", mart)
+	save(genes, file="~/generic/data/ensembl/genes.GRCh37v75.biomart.RData")
+}
 res.annotated <- merge(res.df, genes[,1:3], by.x="id", by.y="ensembl_gene_id", all.x=T) # add gene annotation
 res.annotated <- res.annotated[,c(1,8,9,2,3,4,5,6,7)] # reorder columns
 res.annotated <- merge(res.annotated, counts.norm, by.x="id", by.y="row.names", all.x=T)  # add normalized read counts to output

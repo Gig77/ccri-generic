@@ -6,7 +6,7 @@ option_list <- list(
 		make_option("--sample", type="character", help="sample name")
 		)
 opt <- parse_args(OptionParser(option_list=option_list))
-#opt <- data.frame(sample="SB36C", stringsAsFactors=F)
+#opt <- data.frame(sample="108C", stringsAsFactors=F)
 
 if (invalid(opt$sample)) stop("sample not specified")
 
@@ -45,8 +45,14 @@ split_fit <- function(fit, chr, size) {
 	list(fit_first, fit_second)
 }
 
+sex.list <- read.delim("~/p2ry8-crlf2/results/patient_sex.tsv")
+patient <- gsub("(C|D|R|R2)$", "", opt$sample, perl=T)
+sex <- sex.list$sex[sex.list$patient==patient]
+
+if (invalid(sex)) stop(sprintf("ERROR: could not determine sex of patient %s (sample %s). Check if there is an entry in sex file ~/p2ry8-crlf2/results/patient_sex.tsv", patient, opt$sample))
+
 # load counts and background estimates
-load("counts.bg.p2ry8.RData")
+load("counts.bg.RData")
 
 # we do not fit individual chromosomes separately as suggested by vignette, but use larger genomic junks
 # gives better results, probably due to more accurate GC bias estimates
@@ -61,6 +67,15 @@ for (chr in c("4", "6", "8", "10", "12", "14", "16", "18", "20", "22", "X")) {
 }
 
 # fit model
+#if (sex == "m") {
+#	fit.all.1 <- exomeCopy(counts.combined.1["1"], opt$sample, X.names = c("log.bg.male", "GC", "GC.sq", "width"), S = 0:6, d = 2)
+#	fit.all.2 <- exomeCopy(counts.combined.2["2"], opt$sample, X.names = c("log.bg.male", "GC", "GC.sq", "width"), S = 0:6, d = 2)
+#} else if (sex == "f") { 
+#	fit.all.1 <- exomeCopy(counts.combined.1["1"], opt$sample, X.names = c("log.bg.female", "GC", "GC.sq", "width"), S = 0:6, d = 2)
+#	fit.all.2 <- exomeCopy(counts.combined.2["2"], opt$sample, X.names = c("log.bg.female", "GC", "GC.sq", "width"), S = 0:6, d = 2)
+#} else {
+#	stop(sprintf("Invalid sex %s", sex))
+#}
 fit.all.1 <- exomeCopy(counts.combined.1["1"], opt$sample, X.names = c("log.bg", "GC", "GC.sq", "width"), S = 0:6, d = 2)
 fit.all.2 <- exomeCopy(counts.combined.2["2"], opt$sample, X.names = c("log.bg", "GC", "GC.sq", "width"), S = 0:6, d = 2)
 
