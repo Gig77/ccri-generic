@@ -45,7 +45,11 @@ qc/%.samtools.flagstat: gsnap/%.gsnap.bam
 # ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.other.exons.bed was created by subtracting the above features from ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.all.exons.bed using '~/tools/bedtools-2.17.0/bin/subtractBed -A'
 
 qc/allpatients.stats.pdf: qc/allpatients.stats.txt ~/generic/scripts/plot_read_stats.R
-	Rscript ~/generic/scripts/plot_read_stats.R --input $< --output $@.part --y-max=40
+ifdef COUNT_STAT_YMAX
+	Rscript ~/generic/scripts/plot_read_stats.R --input $< --output $@.part --y-max=$(COUNT_STAT_YMAX)
+else
+	Rscript ~/generic/scripts/plot_read_stats.R --input $< --output $@.part
+endif
 	mv $@.part $@ 
 
 qc/allpatients.stats.txt: $(foreach S, $(SAMPLES), qc/$S.stats.txt)
