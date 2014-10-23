@@ -8,3 +8,8 @@ fastqc/%_fastqc.html: $(PROJECT_HOME)/data/bam/%.bam
 	~/tools/FastQC/fastqc -o fastqc/$*.part -f bam $^
 	mv fastqc/$*.part/* fastqc
 	rmdir fastqc/$*.part
+	
+.PHONY: clean-fastqc
+clean-fastqc:
+	rm fastqc/*
+	rmdir fastqc

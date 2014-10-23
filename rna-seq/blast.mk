@@ -14,3 +14,8 @@ blast/%.unmapped-reads.species-hits.tsv: gsnap/%.gsnap.bam ~/tools/ncbi-blast-2.
 		| cut -f 2,3,4,5 | sort | uniq -c \
 		| sort -k 1,1nr > $@.part
 	mv $@.part $@	
+
+.PHONY: clean-blast
+clean-blast:
+	rm blast/*
+	rmdir blast

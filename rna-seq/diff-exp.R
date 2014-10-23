@@ -27,13 +27,23 @@ sample.files.exp <- strsplit(opt$experiment, ",")[[1]]
 
 sample.table <- data.frame(name=character(), file=character(), condition=character(), stringsAsFactors=F)
 for(i in 1:length(sample.files.ctl)) {
-	sample.name <- strsplit(sample.files.ctl[i], ":")[[1]][1]
-	sample.file <- strsplit(sample.files.ctl[i], ":")[[1]][2]
+	if (grepl(":", sample.files.ctl[i])) {
+		sample.name <- strsplit(sample.files.ctl[i], ":")[[1]][1]
+		sample.file <- strsplit(sample.files.ctl[i], ":")[[1]][2]
+	} else {
+		sample.name <- strsplit(sample.files.ctl[i], ".count")[[1]][1]
+		sample.file <- sample.files.ctl[i]
+	}
 	sample.table[nrow(sample.table)+1,] <- c(sample.name, sample.file, "control")
 }
 for(i in 1:length(sample.files.exp)) {
-	sample.name <- strsplit(sample.files.exp[i], ":")[[1]][1]
-	sample.file <- strsplit(sample.files.exp[i], ":")[[1]][2]
+	if (grepl(":", sample.files.exp[i])) {
+		sample.name <- strsplit(sample.files.exp[i], ":")[[1]][1]
+		sample.file <- strsplit(sample.files.exp[i], ":")[[1]][2]
+	} else {
+		sample.name <- strsplit(sample.files.exp[i], ".count")[[1]][1]
+		sample.file <- sample.files.exp[i]
+	}
 	sample.table[nrow(sample.table)+1,] <- c(sample.name, sample.file, "experiment")
 }
 sample.table$condition <- as.factor(sample.table$condition)

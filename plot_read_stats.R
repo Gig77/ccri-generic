@@ -73,7 +73,7 @@ for(i in 1:length(chunks)) {
 	chunk <- d[chunks[[i]],]
 	barplot(t(chunk)/1000000, beside=T, xaxt='n', yaxt='n', ylim=c(0, ymax))
 	abline(h=seq(0, ymax, by=5), col="gray", lty=2)
-	par(cex.axis=0.7)
+	par(cex.axis=0.6)
 	barplot(t(chunk)/1000000, beside=T, col=cols, ylab="number of reads x 1,000,000", xlab="sample", yaxt='n', ylim=c(0, 35), add=T)
 	box()
 	axis(side=2, at=seq(0, ymax, by=1), labels=NA, tck=-0.01)

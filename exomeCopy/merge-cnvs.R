@@ -14,8 +14,10 @@ gr <- GRanges(seqnames=d$space, ranges=IRanges(start=d$start, end=d$end), sample
 
 # find overlaps
 o <- findOverlaps(gr, gr)
-o <- o[o@queryHits != o@subjectHits]
-o <- o[gr$copy.count[o@queryHits] != 2 & gr$copy.count[o@subjectHits] != 2]
+o <- o[o@queryHits != o@subjectHits] # remove self-hits
+#o <- o[gr$copy.count[o@queryHits] != 2 & gr$copy.count[o@subjectHits] != 2] # remove segments with normal copy number two
+o <- o[(gr$copy.count[o@queryHits] > 2 & gr$copy.count[o@subjectHits] > 2) | (gr$copy.count[o@queryHits] < 2 & gr$copy.count[o@subjectHits] < 2)] 
+o <- o[width(gr)[o@queryHits] >= 20 & width(gr)[o@subjectHits] >= 20] # remove overlaps with tiny single-exon segments
 
 # ignore overlaps with large segments in normal samples due to constitutional trisomy 21 
 const.tri21 <- which(seqnames(gr)=="21" & grepl("C$", gr$sample.name, perl=T) & gr$copy.count > 2 & gr@ranges@width >= 1000000)

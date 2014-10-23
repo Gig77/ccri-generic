@@ -61,3 +61,8 @@ gsnap/%.gsnap.filtered.bam: gsnap/%.gsnap.bam
 	samtools view -h -F 772 $< | grep -P "(^@|NH:i:1)" | samtools view -Shb - > $@.part # PF, mapped, primary, unique; keep pcr duplicates
 	mv $@.part $@
 	~/tools/samtools-0.1.19/samtools index $@
+
+.PHONY: clean-gsnap
+clean-gsnap:
+	rm gsnap/*
+	rmdir gsnap

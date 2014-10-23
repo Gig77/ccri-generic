@@ -18,3 +18,8 @@ htseq/%.subsamples.count: gsnap/%.gsnap.filtered.bam ~/chrisi/data/ensembl/Homo_
 	done
 	echo -e "gene\t10%\t20%\t30%\t40%\t50%\t60%\t70%\t80%\t90%\t100%" | cat - <(paste $@.part <(cut -f 2 htseq/$*.count)) > $@
 	rm $@.part
+
+.PHONY: clean-htseq
+clean-htseq:
+	rm htseq/*
+	rmdir htseq

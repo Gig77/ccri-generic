@@ -18,6 +18,12 @@ PYTHONPATH=/home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-
 #rm csamtools.* rm ctabix.* cvcf.* TabProxies.* # delete pysam/samtools libs shipped with RSeQC to use newer ones installed system-wide
 #rm -rf pysam
 
+
+.PHONY: clean-qc
+clean-qc:
+	rm qc/*
+	rmdir qc
+	
 # ---
 
 # copy patched version of SAM.py to python path
