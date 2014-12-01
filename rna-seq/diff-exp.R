@@ -9,7 +9,8 @@ option_list <- list(
 		make_option("--control", type="character", help="list of htseq count files in control group, comma separated"),
 		make_option("--experiment", type="character", help="list of htseq count files in experiment group, comma separated"),
 		make_option("--output-tsv", type="character", help="output file name (TSV format)"),
-		make_option("--output-xls", type="character", help="output file name (XLSX format)")
+		make_option("--output-xls", type="character", help="output file name (XLSX format)"),
+		make_option("--name-subst-pattern", type="character", help="regular expression to extract sample name from count file")
 )
 opt <- parse_args(OptionParser(option_list=option_list))
 
@@ -26,25 +27,29 @@ sample.files.ctl <- strsplit(opt$control, ",")[[1]]
 sample.files.exp <- strsplit(opt$experiment, ",")[[1]] 
 
 sample.table <- data.frame(name=character(), file=character(), condition=character(), stringsAsFactors=F)
-for(i in 1:length(sample.files.ctl)) {
-	if (grepl(":", sample.files.ctl[i])) {
-		sample.name <- strsplit(sample.files.ctl[i], ":")[[1]][1]
-		sample.file <- strsplit(sample.files.ctl[i], ":")[[1]][2]
-	} else {
-		sample.name <- strsplit(sample.files.ctl[i], ".count")[[1]][1]
-		sample.file <- sample.files.ctl[i]
-	}
-	sample.table[nrow(sample.table)+1,] <- c(sample.name, sample.file, "control")
-}
 for(i in 1:length(sample.files.exp)) {
 	if (grepl(":", sample.files.exp[i])) {
 		sample.name <- strsplit(sample.files.exp[i], ":")[[1]][1]
 		sample.file <- strsplit(sample.files.exp[i], ":")[[1]][2]
 	} else {
 		sample.name <- strsplit(sample.files.exp[i], ".count")[[1]][1]
+		if (!is.null(opt$'name-subst-pattern')) { sample.name <- gsub(opt$'name-subst-pattern', "\\1", sample.name, perl=T) }
+		print(sprintf("Adding experiment sample %s %s", sample.name, sample.files.exp[i]))
 		sample.file <- sample.files.exp[i]
 	}
 	sample.table[nrow(sample.table)+1,] <- c(sample.name, sample.file, "experiment")
+}
+for(i in 1:length(sample.files.ctl)) {
+	if (grepl(":", sample.files.ctl[i])) {
+		sample.name <- strsplit(sample.files.ctl[i], ":")[[1]][1]
+		sample.file <- strsplit(sample.files.ctl[i], ":")[[1]][2]
+	} else {
+		sample.name <- strsplit(sample.files.ctl[i], ".count")[[1]][1]
+		if (!is.null(opt$'name-subst-pattern')) { sample.name <- gsub(opt$'name-subst-pattern', "\\1", sample.name, perl=T) }
+		print(sprintf("Adding control sample %s %s", sample.name, sample.files.ctl[i]))
+		sample.file <- sample.files.ctl[i]
+	}
+	sample.table[nrow(sample.table)+1,] <- c(sample.name, sample.file, "control")
 }
 sample.table$condition <- as.factor(sample.table$condition)
 
@@ -61,13 +66,14 @@ res.df$id <- rownames(res.df)
 
 # annotate genes with Ensembl biomart
 #---
-if(file.exists("genes.GRCh37v75.biomart.RData")) {
-	load("~/generic/data/ensembl/genes.GRCh37v75.biomart.RData")
+biomartfile <- "~/generic/data/ensembl/genes.GRCh37v75.biomart.RData"
+if(file.exists(biomartfile)) {
+	load(biomartfile)
 } else {
 	library("biomaRt")
 	mart <- useMart(biomart="ensembl", dataset="hsapiens_gene_ensembl") # GRCh37, v75
 	genes <- getGene(res.df$id, "ensembl_gene_id", mart)
-	save(genes, file="~/generic/data/ensembl/genes.GRCh37v75.biomart.RData")
+	save(genes, file=biomartfile)
 }
 res.annotated <- merge(res.df, genes[,1:3], by.x="id", by.y="ensembl_gene_id", all.x=T) # add gene annotation
 res.annotated <- res.annotated[,c(1,8,9,2,3,4,5,6,7)] # reorder columns
