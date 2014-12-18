@@ -46,6 +46,7 @@ gsnap/%.gsnap.bam: $(PROJECT_HOME)/data/bam/%.bam
 		2>&1 | $(LOG)
 
 	# unfortunately MarkDuplicates does not allow streaming, so we have to create a temporary file...
+	mkdir -p picard
 	java -Xmx2g -Djava.io.tmpdir=/data/tmp -jar ~/tools/picard-tools-1.114/MarkDuplicates.jar \
 		INPUT=$@.bam \
 		OUTPUT=$@.part \

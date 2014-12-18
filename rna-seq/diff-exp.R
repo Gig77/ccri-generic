@@ -15,12 +15,12 @@ option_list <- list(
 opt <- parse_args(OptionParser(option_list=option_list))
 
 #debugging
-#opt <- data.frame(control="18378:18378_CGAAGG_C4993ACXX_5_20140509B_20140509.count,18379:18379_AAGACA_C4993ACXX_5_20140509B_20140509.count", 
-#		          experiment="18380:18380_TAATCG_C4993ACXX_5_20140509B_20140509.count,18381:18381_CGCAAC_C4993ACXX_5_20140509B_20140509.count",
-#				  'output-tsv'="deseq/strobl-dox-empty-vs-etv6.deseq2.tsv",
-#				  'output-xls'="deseq/strobl-dox-empty-vs-etv6.deseq2.xlsx",
+#opt <- data.frame(experiment="C57C3ACXX_CV_A1_14s006561-1-1_Vesely_lane114s006561_sequence.count,C57C3ACXX_CV_A2_14s006562-1-1_Vesely_lane114s006562_sequence.count,C57C3ACXX_CV_A3_14s006563-1-1_Vesely_lane114s006563_sequence.count,C57C3ACXX_CV_A4_14s006564-1-1_Vesely_lane114s006564_sequence.count,C57C3ACXX_CV_A5_14s006565-1-1_Vesely_lane114s006565_sequence.count,C57C3ACXX_CV_A7_14s006566-1-1_Vesely_lane114s006566_sequence.count,C57C3ACXX_CV_A8_14s006567-1-1_Vesely_lane114s006567_sequence.count,C57C3ACXX_CV_A9_14s006568-1-1_Vesely_lane214s006568_sequence.count,C57C3ACXX_CV_A10_14s006569-1-1_Vesely_lane214s006569_sequence.count,C57C3ACXX_CV_A11_14s006570-1-1_Vesely_lane214s006570_sequence.count,C57C3ACXX_CV_A12_14s006571-1-1_Vesely_lane214s006571_sequence.count,C57C3ACXX_CV_A13_14s006572-1-1_Vesely_lane214s006572_sequence.count",
+#				  control="C57C3ACXX_CV_D1_14s006585-1-1_Vesely_lane414s006585_sequence.count,C57C3ACXX_CV_D2_14s006586-1-1_Vesely_lane514s006586_sequence.count,C57C3ACXX_CV_D3_14s006587-1-1_Vesely_lane514s006587_sequence.count,C57C3ACXX_CV_D4_14s006588-1-1_Vesely_lane514s006588_sequence.count,C57C3ACXX_CV_D5_14s006589-1-1_Vesely_lane514s006589_sequence.count,C57C3ACXX_CV_D6_14s006590-1-1_Vesely_lane514s006590_sequence.count,C57C3ACXX_CV_D7_14s006591-1-1_Vesely_lane514s006591_sequence.count,C57C3ACXX_CV_D8_14s006592-1-1_Vesely_lane514s006592_sequence.count",
+#				  'name-subst-pattern'= ".*CV_(.\\d+)_.*",
+#				  'output-tsv'="deseq/iAMP-vs-PC.tsv",
 #				  stringsAsFactors=F, check.names=F)
-
+				  
 # prepare sample table for DESeq
 #---
 sample.files.ctl <- strsplit(opt$control, ",")[[1]] 
@@ -75,15 +75,20 @@ if(file.exists(biomartfile)) {
 	genes <- getGene(res.df$id, "ensembl_gene_id", mart)
 	save(genes, file=biomartfile)
 }
-res.annotated <- merge(res.df, genes[,1:3], by.x="id", by.y="ensembl_gene_id", all.x=T) # add gene annotation
-res.annotated <- res.annotated[,c(1,8,9,2,3,4,5,6,7)] # reorder columns
+res.annotated <- merge(res.df, genes[,c("ensembl_gene_id", "hgnc_symbol", "description", "chromosome_name", "start_position", "end_position")], by.x="id", by.y="ensembl_gene_id", all.x=T) # add gene annotation
+res.annotated <- res.annotated[,c(1,8,10,11,12,9,2,3,4,5,6,7)] # reorder columns
 res.annotated <- merge(res.annotated, counts.norm, by.x="id", by.y="row.names", all.x=T)  # add normalized read counts to output
+
+# compute group-wise means
+res.annotated$baseMean.experiment <- rowMeans(res.annotated[,sample.table$name[sample.table$condition=="experiment"]], na.rm=T)
+res.annotated$baseMean.control <- rowMeans(res.annotated[,sample.table$name[sample.table$condition=="control"]], na.rm=T)
 
 # write output
 #---
-res.annotated <- res.annotated[order(res.annotated$padj),]
-
+colorder <- c("id", "hgnc_symbol", "description", "chromosome_name", "start_position", "end_position", "baseMean", "baseMean.experiment", "baseMean.control", "log2FoldChange", "lfcSE", "stat", "pvalue", "padj")
+res.annotated <- res.annotated[order(res.annotated$padj),c(colorder, names(res.annotated)[!names(res.annotated) %in% colorder])]
 write.table(res.annotated, file=opt$'output-tsv', col.names=T, row.names=F, sep="\t", quote=F)
+
 if (!is.null(opt$'output-xls')) {
 	options(java.parameters="-Xmx4g")
 	library("XLConnect")

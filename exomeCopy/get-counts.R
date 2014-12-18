@@ -2,7 +2,7 @@ library(exomeCopy)
 
 target.file <- "~/generic/data/illumina/nexterarapidcapture_exome_targetedregions.nochr.bed"
 bam.files <- list.files(path="~/p2ry8-crlf2/data/bam", pattern="*.bam$", full.names=T)
-bam.files <- bam.files[!grepl("(abra|715)", bam.files)]
+bam.files <- bam.files[!grepl("(abra|715C|715D|715C|715R_)", bam.files)]
 sample.names <- paste0(sub(".*variant_calling_process_sample_(.+)_realigned.*", "\\1", bam.files))
 reference.file <- "~/generic/data/broad/human_g1k_v37.fasta"
 
