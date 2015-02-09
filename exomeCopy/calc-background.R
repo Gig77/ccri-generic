@@ -21,7 +21,7 @@ load("counts.RData")
 sample.names.bg <- sample.names[grep("C$", sample.names)]
 
 # exclude trisomy 21 cases; 242 is poor quality; exclude hyperdiploid 715,460,564,545 (different batch, used TruSeq not Nextera)
-sample.names.bg <- sample.names.bg[!sample.names.bg %in% c("365C", "400C", "802C", "DS10898C", "GI13C", "HV57C", "HW11537C", "SE15285C", "VS14645C", "1089C", "360C", "506C", "887C", "957C", "961C", "DL2C", "N7C", "242C", "715C", "460C", "564C", "545C")]
+sample.names.bg <- sample.names.bg[!sample.names.bg %in% c("AL9890C", "GL11356C", "365C", "400C", "802C", "DS10898C", "GI13C", "HV57C", "HW11537C", "SE15285C", "VS14645C", "1089C", "360C", "506C", "887C", "957C", "961C", "DL2C", "N7C", "242C", "715C", "460C", "564C", "545C")]
 
 # split by sex
 sex <- read.delim("~/p2ry8-crlf2/results/patient_sex.tsv")
