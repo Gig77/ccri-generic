@@ -8,7 +8,6 @@ d <- read.delim(files[1], stringsAsFactor=F)
 for (i in 2:length(files)) {
 	d <- rbind(d, read.delim(files[i], stringsAsFactor=F))
 }
-d <- d[!d$sample.name %in% c("242C", "GI8R", "MA5R"),] # ignore crappy sample 242
 
 gr <- GRanges(seqnames=d$space, ranges=IRanges(start=d$start, end=d$end), sample.name=d$sample.name, copy.count=d$copy.count, log.odds=d$log.odds, nranges=d$nranges, targeted.bp=d$targeted.bp, genes=d$genes)
 
@@ -22,6 +21,11 @@ o <- o[width(gr)[o@queryHits] >= 20 & width(gr)[o@subjectHits] >= 20] # remove o
 # ignore overlaps with large segments in normal samples due to constitutional trisomy 21 
 const.tri21 <- which(seqnames(gr)=="21" & grepl("C$", gr$sample.name, perl=T) & gr$copy.count > 2 & gr@ranges@width >= 1000000)
 o <- o[!(o@queryHits %in% const.tri21) & !(o@subjectHits %in% const.tri21)]
+
+# remove overlaps with crappy samples
+crappy <- c("242C", "GI8R", "MA5R", "HV57R", "KE17247R")
+o <- o[!(gr$sample.name[o@subjectHits] %in% crappy),]
+o <- o[!(seqnames(gr)[o@subjectHits] %in% c("X","Y") & gr$sample.name[o@subjectHits] %in% c("GI8C")),] # GI8C gives weird results for sex chromosomes...
 
 # determine overlap in percent of shared exons
 ex <- read.delim("~/generic/data/illumina/nexterarapidcapture_exome_targetedregions.nochr.bed", header=F)

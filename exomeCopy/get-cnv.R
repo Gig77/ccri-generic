@@ -74,6 +74,10 @@ counts.combined.2 <- counts["1"]
 for (chr in c("2", "3", "4", "6", "8", "10", "12", "14", "16", "18", "20", "22")) {
 	counts.combined.2 <- combine_chr(counts.combined.2, counts[chr])
 }
+counts.combined.xy <- counts["1"]
+for (chr in c("2", "3", "7", "11", "12", "13", "X", "Y")) {
+	counts.combined.xy <- combine_chr(counts.combined.xy, counts[chr])
+}
 
 # fit model
 #if (sex == "m") {
@@ -88,10 +92,9 @@ for (chr in c("2", "3", "4", "6", "8", "10", "12", "14", "16", "18", "20", "22")
 fit.all.1 <- exomeCopy(counts.combined.1["1"], opt$sample, X.names = c("log.bg", "GC", "GC.sq", "width"), S = 0:6, d = 2)
 fit.all.2 <- exomeCopy(counts.combined.2["1"], opt$sample, X.names = c("log.bg", "GC", "GC.sq", "width"), S = 0:6, d = 2)
 if (sex == "m") {
-	fit.X <- exomeCopy(counts["X"], opt$sample, X.names = c("log.bg.male", "GC", "GC.sq", "width"), S = 0:6, d = 2)  # d=1 causes troubles with pseudoautosomal regions on X masked on Y
-	fit.Y <- exomeCopy(counts["Y"], opt$sample, X.names = c("log.bg.male", "GC", "GC.sq", "width"), S = 0:6, d = 1)
+	fit.xy <- exomeCopy(counts.combined.xy["1"], opt$sample, X.names = c("log.bg.male", "GC", "GC.sq", "width"), S = 0:6, d = 2)  # d=1 causes troubles with pseudoautosomal regions on X masked on Y
 } else if (sex == "f") { 
-	fit.X <- exomeCopy(counts["X"], opt$sample, X.names = c("log.bg.female", "GC", "GC.sq", "width"), S = 0:6, d = 2)
+	fit.xy <- exomeCopy(counts.combined.xy["1"], opt$sample, X.names = c("log.bg.female", "GC", "GC.sq", "width"), S = 0:6, d = 2)
 } else {
 	stop(sprintf("Invalid sex %s", sex))
 }
@@ -117,10 +120,15 @@ for (chr in c("1", "2", "3", "4", "6", "8", "10", "12", "14", "16", "18", "20", 
 		fit[[opt$sample]][[chr]] <- splitted[[1]]
 	}
 }
-fit[[opt$sample]][["X"]] <- fit.X
-
-if (sex == "m") {
-	fit[[opt$sample]][["Y"]] <- fit.Y
+fit.rest <- fit.xy
+for (chr in c("1", "2", "3", "7", "11", "12", "13", "X", "Y")) {
+	splitted <- split_fit(fit.rest, chr, max(end(counts[chr])))
+	fit.rest <- splitted[[2]] 
+	if (chr == "X") {
+		fit[[opt$sample]][[chr]] <- splitted[[1]]
+	} else if (chr == "Y" && sex == "m") {
+		fit[[opt$sample]][[chr]] <- splitted[[1]]
+	}
 }
 
 # plot results
@@ -132,9 +140,9 @@ for (chr in c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13
 	}
 	
 	cols <- c("red", "orange", "gray", "deepskyblue", "blue", "blue2", "blue4")
-	if (sex == "m" && chr %in% c("X", "Y")) {
-		cols <- c("red", "gray", "deepskyblue", "blue", "blue2", "blue4", "blue4")
-	}
+	#if (sex == "m" && chr %in% c("X", "Y")) {
+	#	cols <- c("red", "gray", "deepskyblue", "blue", "blue2", "blue4", "blue4")
+	#}
 	plot(fit[[opt$sample]][[chr]], main=chr, cex=0.2, ylim=c(0, 6), xlab='', ylab='', cex.main=2, cex.axis=1, col=cols) 
 }
 dev.off()
