@@ -71,8 +71,8 @@ if(file.exists(biomartfile)) {
 	load(biomartfile)
 } else {
 	library("biomaRt")
-	mart <- useMart(biomart="ensembl", dataset="hsapiens_gene_ensembl") # GRCh37, v75
-	genes <- getGene(res.df$id, "ensembl_gene_id", mart)
+	mart <- useMart(biomart="ENSEMBL_MART_ENSEMBL", host="grch37.ensembl.org", path="/biomart/martservice" ,dataset="hsapiens_gene_ensembl") # GRCh37, v75
+	genes <- getBM(attributes=c("ensembl_gene_id", "hgnc_symbol", "description", "chromosome_name", "band", "strand", "start_position", "end_position"), mart=mart)
 	save(genes, file=biomartfile)
 }
 
@@ -82,7 +82,7 @@ genes <- genes[genes$chromosome_name %in% c(seq(1:22), "X", "Y", "MT"),]
 genes$chromosome_name <- as.factor(as.character(genes$chromosome_name))
 genes.dedup <- cast(genes[,c("ensembl_gene_id", "hgnc_symbol")], formula=ensembl_gene_id~., value="hgnc_symbol", fun.aggregate=function(x) { paste(x, collapse=",") })
 names(genes.dedup) <- c("ensembl_gene_id", "hgnc_symbol")
-genes <- merge(genes.dedup, unique(genes[,c(1,3,4,5,6,7,8,9)]), by="ensembl_gene_id")
+genes <- merge(genes.dedup, unique(genes[,names(genes)[!names(genes) %in% "hgnc_symbol"]]), by="ensembl_gene_id")
 
 res.annotated <- merge(res.df, genes[,c("ensembl_gene_id", "hgnc_symbol", "description", "chromosome_name", "start_position", "end_position")], by.x="id", by.y="ensembl_gene_id", all.x=T) # add gene annotation
 res.annotated <- res.annotated[,c(1,8,10,11,12,9,2,3,4,5,6,7)] # reorder columns
