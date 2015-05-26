@@ -1,4 +1,4 @@
-s <- read.delim("~/p2ry8-crlf2/results/exomeCopy/allpatients.compiled-segments.exomeCopy.tsv")
+s <- read.delim("/mnt/projects/p2ry8-crlf2/results/exomeCopy/allpatients.compiled-segments.exomeCopy.tsv")
 sf <- s
 sf <- sf[sf$copy.count != 2,]
 sf <- sf[!grepl("C", sf$overlap.samples),]
@@ -9,4 +9,4 @@ recurrent <- !is.na(sf$overlap.count.tumor) & sf$overlap.count.tumor >= 3
 
 sf <- sf[high.score | (sf$nranges >= 2 & (conserved | recurrent)),]
 
-write.table(sf, "~/p2ry8-crlf2/results/exomeCopy/allpatients.filtered-segments.exomeCopy.tsv.part", row.names=F, col.names=T, sep="\t", quote=F)
+write.table(sf, "/mnt/projects/p2ry8-crlf2/results/exomeCopy/allpatients.filtered-segments.exomeCopy.tsv.part", row.names=F, col.names=T, sep="\t", quote=F)

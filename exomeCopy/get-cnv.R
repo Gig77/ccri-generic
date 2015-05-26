@@ -45,11 +45,11 @@ split_fit <- function(fit, chr, size) {
 	list(fit_first, fit_second)
 }
 
-sex.list <- read.delim("~/p2ry8-crlf2/results/patient_sex.tsv")
+sex.list <- read.delim("/mnt/projects/p2ry8-crlf2/results/patient_sex.tsv")
 patient <- gsub("(C|D|R|R2|R3)$", "", opt$sample, perl=T)
 sex <- sex.list$sex[sex.list$patient==patient]
 
-if (invalid(sex)) stop(sprintf("ERROR: could not determine sex of patient %s (sample %s). Check if there is an entry in sex file ~/p2ry8-crlf2/results/patient_sex.tsv", patient, opt$sample))
+if (invalid(sex)) stop(sprintf("ERROR: could not determine sex of patient %s (sample %s). Check if there is an entry in sex file /mnt/projects/p2ry8-crlf2/results/patient_sex.tsv", patient, opt$sample))
 
 # load counts and background estimates
 load("counts.bg.RData")

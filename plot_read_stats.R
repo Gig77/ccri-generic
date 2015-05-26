@@ -9,7 +9,7 @@ option_list <- list(
 		make_option("--output", type="character", help="output file (PDF)")
 )
 opt <- parse_args(OptionParser(option_list=option_list))
-#opt <- data.frame(input="~/fikret/results/qc/allpatients.stats.txt", output="~/fikret/results/qc/allpatients.stats.pdf", 'y-max'=60, stringsAsFactors=F, check.names=F) # for test purposes
+#opt <- data.frame(input="/mnt/projects/fikret/results/qc/allpatients.stats.txt", output="/mnt/projects/fikret/results/qc/allpatients.stats.pdf", 'y-max'=60, stringsAsFactors=F, check.names=F) # for test purposes
 
 ymax <- ifelse(invalid(opt$'y-max'), 40, opt$'y-max')
 

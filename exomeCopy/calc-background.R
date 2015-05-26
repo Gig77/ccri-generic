@@ -1,10 +1,10 @@
 library(exomeCopy)
 
-target.file <- "~/generic/data/illumina/nexterarapidcapture_exome_targetedregions.nochr.bed"
-bam.files <- list.files(path="~/p2ry8-crlf2/data/bam", pattern="*.bam$", full.names=T)
+target.file <- "/mnt/projects/generic/data/illumina/nexterarapidcapture_exome_targetedregions.nochr.bed"
+bam.files <- list.files(path="/mnt/projects/p2ry8-crlf2/data/bam", pattern="*.bam$", full.names=T)
 bam.files <- bam.files[!grepl("(abra|715C|715D|715C|715R_)", bam.files)]
 sample.names <- paste0(sub(".*variant_calling_process_sample_(.+)_realigned.*", "\\1", bam.files))
-reference.file <- "~/generic/data/broad/human_g1k_v37.fasta"
+reference.file <- "/mnt/projects/generic/data/broad/human_g1k_v37.fasta"
 
 target.df <- read.delim(target.file, header = FALSE)
 target <- GRanges(seqname = target.df[, 1], IRanges(start = target.df[,2] + 1, end = target.df[, 3]))
@@ -24,7 +24,7 @@ sample.names.bg <- sample.names[grep("C$", sample.names)]
 sample.names.bg <- sample.names.bg[!sample.names.bg %in% c("AL9890C", "GL11356C", "365C", "400C", "802C", "DS10898C", "GI13C", "HV57C", "HW11537C", "SE15285C", "VS14645C", "1089C", "360C", "506C", "887C", "957C", "961C", "DL2C", "N7C", "242C", "715C", "460C", "564C", "545C")]
 
 # split by sex
-sex <- read.delim("~/p2ry8-crlf2/results/patient_sex.tsv")
+sex <- read.delim("/mnt/projects/p2ry8-crlf2/results/patient_sex.tsv")
 sample.names.bg.male <- sample.names.bg[sample.names.bg %in% paste0(sex$patient[sex$sex=="m"], "C")] 
 sample.names.bg.female <- sample.names.bg[sample.names.bg %in% paste0(sex$patient[sex$sex=="f"], "C")] 
 

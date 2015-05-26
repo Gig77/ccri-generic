@@ -5,11 +5,11 @@ gsnap: $(foreach S, $(SAMPLES), gsnap/$S.gsnap.bam)
 # ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz
 	
 # build GMAP database
-# cd ~/chrisi/data/gsnap
-# ~/tools/gmap-2014-05-15/util/gmap_build -d g1k_v37 ~/generic/data/broad/human_g1k_v37.fasta
-# cat ~/generic/data/broad/human_g1k_v37.fasta ~/chrisi/results/etv6-runx1.breakpoint.fa ~/generic/data/ncbi/NC_001501_moloney_murine_leukemia_virus.fasta > ~/chrisi/data/gsnap/human_g1k_v37_etv6runx1.fasta 
-# ~/tools/gmap-2014-05-15/bin/gmap_build --dir=/data/christian/chrisi/data/current/gsnap --db=g1k_v37_etv6runx1 --circular MT,NC_001501.1 ~/chrisi/data/gsnap/human_g1k_v37_etv6runx1.fasta
-# rm ~/chrisi/data/gsnap/human_g1k_v37_etv6runx1.fasta
+# cd /mnt/projects/chrisi/data/gsnap
+# ~/tools/gmap-2014-05-15/util/gmap_build -d g1k_v37 /mnt/projects/generic/data/broad/human_g1k_v37.fasta
+# cat /mnt/projects/generic/data/broad/human_g1k_v37.fasta /mnt/projects/chrisi/results/etv6-runx1.breakpoint.fa /mnt/projects/generic/data/ncbi/NC_001501_moloney_murine_leukemia_virus.fasta > /mnt/projects/chrisi/data/gsnap/human_g1k_v37_etv6runx1.fasta 
+# ~/tools/gmap-2014-05-15/bin/gmap_build --dir=/data/christian/chrisi/data/current/gsnap --db=g1k_v37_etv6runx1 --circular MT,NC_001501.1 /mnt/projects/chrisi/data/gsnap/human_g1k_v37_etv6runx1.fasta
+# rm /mnt/projects/chrisi/data/gsnap/human_g1k_v37_etv6runx1.fasta
 #
 # gunzip -c snp138.txt.gz | ~/tools/gmap-2014-05-15/bin/dbsnp_iit -w 1 > g1k_v37.snp138.txt
 # cd g1k_v37_etv6runx1

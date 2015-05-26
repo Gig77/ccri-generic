@@ -2,7 +2,7 @@ options(warn=1)
 library(GenomicRanges)
 library(reshape)
 
-files <- list.files(path="~/p2ry8-crlf2/results/exomeCopy", pattern="*.compiled-segments.tsv$", full.names=T)
+files <- list.files(path="/mnt/projects/p2ry8-crlf2/results/exomeCopy", pattern="*.compiled-segments.tsv$", full.names=T)
 
 d <- read.delim(files[1], stringsAsFactor=F)
 for (i in 2:length(files)) {
@@ -28,7 +28,7 @@ o <- o[!(gr$sample.name[o@subjectHits] %in% crappy),]
 o <- o[!(seqnames(gr)[o@subjectHits] %in% c("X","Y") & gr$sample.name[o@subjectHits] %in% c("GI8C")),] # GI8C gives weird results for sex chromosomes...
 
 # determine overlap in percent of shared exons
-ex <- read.delim("~/generic/data/illumina/nexterarapidcapture_exome_targetedregions.nochr.bed", header=F)
+ex <- read.delim("/mnt/projects/generic/data/illumina/nexterarapidcapture_exome_targetedregions.nochr.bed", header=F)
 er <- GRanges(seqnames=ex$V1, ranges=IRanges(start=ex$V2, end=ex$V3))
 oex <- findOverlaps(gr, er)
 segex <- cast(as.data.frame(oex), formula=queryHits~., value="subjectHits", fun.aggregate=function(x) { paste(x, collapse=",") })
@@ -61,5 +61,5 @@ gr$overlap.count[o.aggregated$queryHits] <- o.aggregated$overlap.count
 gr$overlap.count.tumor[o.aggregated$queryHits] <- o.aggregated$overlap.count.tumor
 
 # write table
-write.table(as.data.frame(gr), file="~/p2ry8-crlf2/results/exomeCopy/allpatients.compiled-segments.exomeCopy.tsv.part", quote=FALSE, sep="\t", row.names=FALSE, col.names=TRUE)
+write.table(as.data.frame(gr), file="/mnt/projects/p2ry8-crlf2/results/exomeCopy/allpatients.compiled-segments.exomeCopy.tsv.part", quote=FALSE, sep="\t", row.names=FALSE, col.names=TRUE)
 

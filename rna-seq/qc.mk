@@ -27,7 +27,7 @@ clean-qc:
 # ---
 
 # copy patched version of SAM.py to python path
-/home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages/RSeQC-2.3.9-py2.7-linux-x86_64.egg/qcmodule/SAM.py: ~/generic/scripts/rna-seq/SAM.py
+/home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages/RSeQC-2.3.9-py2.7-linux-x86_64.egg/qcmodule/SAM.py: /mnt/projects/generic/scripts/rna-seq/SAM.py
 	cp $< $@
 
 # ---
@@ -40,21 +40,21 @@ qc/%.samtools.flagstat: gsnap/%.gsnap.bam
 # ---
 
 # how to generate BED files from Ensembl GTF
-# zcat ~/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.gtf.gz | perl -ne 'print "$1\t$2\t$3\t$4\n" if (/^(.*?)\t.*?\texon\t(.*?)\t(.*?)\t.*gene_name \"(.*?)\"/)' > ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.all.exons.bed
-# zcat ~/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.gtf.gz | perl -ne 'print "$1\t$2\t$3\t$4\n" if (/^(.*?)\trRNA\texon\t(.*?)\t(.*?)\t.*gene_name \"(.*?)\"/)' > ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.rRNA.exons.bed
-# zcat ~/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.gtf.gz | perl -ne 'print "$1\t$2\t$3\t$4\n" if (/^(.*?)\tlincRNA\texon\t(.*?)\t(.*?)\t.*gene_name \"(.*?)\"/)' > ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.lincRNA.exons.bed
-# zcat ~/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.gtf.gz | perl -ne 'print "$1\t$2\t$3\t$4\n" if (/^(.*?)\tmiRNA\texon\t(.*?)\t(.*?)\t.*gene_name \"(.*?)\"/)' > ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.miRNA.exons.bed
-# zcat ~/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.gtf.gz | perl -ne 'print "$1\t$3\t$4\t$5\n" if (/^(.*?)\t(Mt_rRNA|Mt_tRNA)\texon\t(.*?)\t(.*?)\t.*gene_name \"(.*?)\"/)' > ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.mtRNA.exons.bed
-# zcat ~/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.gtf.gz | perl -ne 'print "$1\t$3\t$4\t$5\n" if (/^(.*?)\t(misc_RNA|snoRNA|snRNA)\texon\t(.*?)\t(.*?)\t.*gene_name \"(.*?)\"/)' > ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.miscRNA.exons.bed
-# zcat ~/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.gtf.gz | perl -ne 'print "$1\t$3\t$4\t$5\n" if (/^(.*?)\t(nonsense_mediated_decay|non_stop_decay|polymorphic_pseudogene|processed_pseudogene|pseudogene|transcribed_processed_pseudogene|transcribed_unprocessed_pseudogene|translated_processed_pseudogene|unitary_pseudogene|unprocessed_pseudogene)\texon\t(.*?)\t(.*?)\t.*gene_name \"(.*?)\"/)' > ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.pseudogene.exons.bed
-# zcat ~/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.gtf.gz | perl -ne 'print "$1\t$3\t$4\t$5\n" if (/^(.*?)\t(protein_coding)\texon\t(.*?)\t(.*?)\t.*gene_name \"(.*?)\"/)' > ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.protein_coding.exons.bed
-# ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.other.exons.bed was created by subtracting the above features from ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.all.exons.bed using '~/tools/bedtools-2.17.0/bin/subtractBed -A'
+# zcat /mnt/projects/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.gtf.gz | perl -ne 'print "$1\t$2\t$3\t$4\n" if (/^(.*?)\t.*?\texon\t(.*?)\t(.*?)\t.*gene_name \"(.*?)\"/)' > /mnt/projects/generic/data/ensembl/Homo_sapiens.GRCh37.75.all.exons.bed
+# zcat /mnt/projects/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.gtf.gz | perl -ne 'print "$1\t$2\t$3\t$4\n" if (/^(.*?)\trRNA\texon\t(.*?)\t(.*?)\t.*gene_name \"(.*?)\"/)' > /mnt/projects/generic/data/ensembl/Homo_sapiens.GRCh37.75.rRNA.exons.bed
+# zcat /mnt/projects/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.gtf.gz | perl -ne 'print "$1\t$2\t$3\t$4\n" if (/^(.*?)\tlincRNA\texon\t(.*?)\t(.*?)\t.*gene_name \"(.*?)\"/)' > /mnt/projects/generic/data/ensembl/Homo_sapiens.GRCh37.75.lincRNA.exons.bed
+# zcat /mnt/projects/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.gtf.gz | perl -ne 'print "$1\t$2\t$3\t$4\n" if (/^(.*?)\tmiRNA\texon\t(.*?)\t(.*?)\t.*gene_name \"(.*?)\"/)' > /mnt/projects/generic/data/ensembl/Homo_sapiens.GRCh37.75.miRNA.exons.bed
+# zcat /mnt/projects/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.gtf.gz | perl -ne 'print "$1\t$3\t$4\t$5\n" if (/^(.*?)\t(Mt_rRNA|Mt_tRNA)\texon\t(.*?)\t(.*?)\t.*gene_name \"(.*?)\"/)' > /mnt/projects/generic/data/ensembl/Homo_sapiens.GRCh37.75.mtRNA.exons.bed
+# zcat /mnt/projects/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.gtf.gz | perl -ne 'print "$1\t$3\t$4\t$5\n" if (/^(.*?)\t(misc_RNA|snoRNA|snRNA)\texon\t(.*?)\t(.*?)\t.*gene_name \"(.*?)\"/)' > /mnt/projects/generic/data/ensembl/Homo_sapiens.GRCh37.75.miscRNA.exons.bed
+# zcat /mnt/projects/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.gtf.gz | perl -ne 'print "$1\t$3\t$4\t$5\n" if (/^(.*?)\t(nonsense_mediated_decay|non_stop_decay|polymorphic_pseudogene|processed_pseudogene|pseudogene|transcribed_processed_pseudogene|transcribed_unprocessed_pseudogene|translated_processed_pseudogene|unitary_pseudogene|unprocessed_pseudogene)\texon\t(.*?)\t(.*?)\t.*gene_name \"(.*?)\"/)' > /mnt/projects/generic/data/ensembl/Homo_sapiens.GRCh37.75.pseudogene.exons.bed
+# zcat /mnt/projects/chrisi/data/ensembl/Homo_sapiens.GRCh37.75.etv6runx1.gtf.gz | perl -ne 'print "$1\t$3\t$4\t$5\n" if (/^(.*?)\t(protein_coding)\texon\t(.*?)\t(.*?)\t.*gene_name \"(.*?)\"/)' > /mnt/projects/generic/data/ensembl/Homo_sapiens.GRCh37.75.protein_coding.exons.bed
+# /mnt/projects/generic/data/ensembl/Homo_sapiens.GRCh37.75.other.exons.bed was created by subtracting the above features from /mnt/projects/generic/data/ensembl/Homo_sapiens.GRCh37.75.all.exons.bed using '~/tools/bedtools-2.17.0/bin/subtractBed -A'
 
-qc/allpatients.stats.pdf: qc/allpatients.stats.txt ~/generic/scripts/plot_read_stats.R
+qc/allpatients.stats.pdf: qc/allpatients.stats.txt /mnt/projects/generic/scripts/plot_read_stats.R
 ifdef COUNT_STAT_YMAX
-	Rscript ~/generic/scripts/plot_read_stats.R --input $< --output $@.part --y-max=$(COUNT_STAT_YMAX)
+	Rscript /mnt/projects/generic/scripts/plot_read_stats.R --input $< --output $@.part --y-max=$(COUNT_STAT_YMAX)
 else
-	Rscript ~/generic/scripts/plot_read_stats.R --input $< --output $@.part
+	Rscript /mnt/projects/generic/scripts/plot_read_stats.R --input $< --output $@.part
 endif
 	mv $@.part $@ 
 
@@ -63,17 +63,17 @@ qc/allpatients.stats.txt: $(foreach S, $(SAMPLES), qc/$S.stats.txt)
 	cat $^ >> $@.part
 	mv $@.part $@ 
 
-qc/%.stats.txt: gsnap/%.gsnap.bam $(PROJECT_HOME)/data/bam/%.bam ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.all.exons.bed ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.all-minus-rRNA.exons.bed ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.protein_coding.exons.bed
+qc/%.stats.txt: gsnap/%.gsnap.bam $(PROJECT_HOME)/data/bam/%.bam /mnt/projects/generic/data/ensembl/Homo_sapiens.GRCh37.75.all.exons.bed /mnt/projects/generic/data/ensembl/Homo_sapiens.GRCh37.75.all-minus-rRNA.exons.bed /mnt/projects/generic/data/ensembl/Homo_sapiens.GRCh37.75.protein_coding.exons.bed
 	mkdir -p qc
 	echo -ne $*"\t" > $@.part 
 	echo -ne `samtools view -c $(PROJECT_HOME)/data/bam/$*.bam`"\t" >> $@.part  # total reads
 	echo -ne `samtools view -c -F 512 $(PROJECT_HOME)/data/bam/$*.bam`"\t" >> $@.part  # pass filter (PF)
 	echo -ne `samtools view -c -F 772 $<`"\t" >> $@.part # PF, mapped, only primary alignments
-	echo -ne `samtools view -c -F 772 $< -L ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.all.exons.bed`"\t" >> $@.part # mapped exonic reads
-	echo -ne `samtools view -c -F 772 $< -L ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.all-minus-rRNA.exons.bed`"\t" >> $@.part # mapped exonic non-rRNA reads
-	echo -ne `samtools view -c -F 772 $< -L ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.protein_coding.exons.bed`"\t" >> $@.part # mapped exonic protein-coding reads
-	echo -ne `samtools view -F 772 $< -L ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.protein_coding.exons.bed | grep "NH:i:1" | wc -l`"\t" >> $@.part # protein-coding, unique mapper
-	echo -ne `samtools view -F 1796 $< -L ~/generic/data/ensembl/Homo_sapiens.GRCh37.75.protein_coding.exons.bed | grep "NH:i:1" | wc -l`"\n" >> $@.part # protein-coding, unique mapper, non-duplicate
+	echo -ne `samtools view -c -F 772 $< -L /mnt/projects/generic/data/ensembl/Homo_sapiens.GRCh37.75.all.exons.bed`"\t" >> $@.part # mapped exonic reads
+	echo -ne `samtools view -c -F 772 $< -L /mnt/projects/generic/data/ensembl/Homo_sapiens.GRCh37.75.all-minus-rRNA.exons.bed`"\t" >> $@.part # mapped exonic non-rRNA reads
+	echo -ne `samtools view -c -F 772 $< -L /mnt/projects/generic/data/ensembl/Homo_sapiens.GRCh37.75.protein_coding.exons.bed`"\t" >> $@.part # mapped exonic protein-coding reads
+	echo -ne `samtools view -F 772 $< -L /mnt/projects/generic/data/ensembl/Homo_sapiens.GRCh37.75.protein_coding.exons.bed | grep "NH:i:1" | wc -l`"\t" >> $@.part # protein-coding, unique mapper
+	echo -ne `samtools view -F 1796 $< -L /mnt/projects/generic/data/ensembl/Homo_sapiens.GRCh37.75.protein_coding.exons.bed | grep "NH:i:1" | wc -l`"\n" >> $@.part # protein-coding, unique mapper, non-duplicate
 	mv $@.part $@ 
 
 # ---
@@ -82,9 +82,9 @@ qc/allpatients.geneBodyCoverage.pdf: $(foreach S, $(SAMPLES), qc/$S.geneBodyCove
 	gs -dBATCH -dNOPAUSE -q -dAutoRotatePages=/None -sDEVICE=pdfwrite -sOutputFile=$@.part $^
 	mv $@.part $@
 
-qc/%.geneBodyCoverage.pdf: gsnap/%.gsnap.filtered.bam ~/generic/data/rseqc/hg19_Ensembl.bed
+qc/%.geneBodyCoverage.pdf: gsnap/%.gsnap.filtered.bam /mnt/projects/generic/data/rseqc/hg19_Ensembl.bed
 	mkdir -p qc
-	PYTHONPATH=$(PYTHONPATH) flock -x .lock ~/tools/RSeQC-2.3.9/bin/geneBody_coverage.py -i $< -r ~/generic/data/rseqc/hg19_Ensembl.bed -o qc/$*
+	PYTHONPATH=$(PYTHONPATH) flock -x .lock ~/tools/RSeQC-2.3.9/bin/geneBody_coverage.py -i $< -r /mnt/projects/generic/data/rseqc/hg19_Ensembl.bed -o qc/$*
 
 # ---
 
@@ -103,9 +103,9 @@ qc/allpatients.read-distribution.txt: $(foreach S, $(SAMPLES), qc/$S.read-distri
 	for S in $^ ; do echo $$S >> $@.part; cat $$S >> $@.part ; done
 	mv $@.part $@
 
-qc/%.read-distribution.txt: gsnap/%.gsnap.filtered.bam ~/generic/data/rseqc/hg19_Ensembl.bed /home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages/RSeQC-2.3.9-py2.7-linux-x86_64.egg/qcmodule/SAM.py
+qc/%.read-distribution.txt: gsnap/%.gsnap.filtered.bam /mnt/projects/generic/data/rseqc/hg19_Ensembl.bed /home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages/RSeQC-2.3.9-py2.7-linux-x86_64.egg/qcmodule/SAM.py
 	mkdir -p qc
-	PYTHONPATH=$(PYTHONPATH) flock -x .lock ~/tools/RSeQC-2.3.9/bin/read_distribution.py -i $< -r ~/generic/data/rseqc/hg19_Ensembl.bed > $@.part
+	PYTHONPATH=$(PYTHONPATH) flock -x .lock ~/tools/RSeQC-2.3.9/bin/read_distribution.py -i $< -r /mnt/projects/generic/data/rseqc/hg19_Ensembl.bed > $@.part
 	mv $@.part $@
 
 # ---
@@ -140,9 +140,9 @@ qc/allpatients.splicing_events.pdf: $(foreach S, $(SAMPLES), qc/$S.splice_events
 	gs -dBATCH -dNOPAUSE -q -dAutoRotatePages=/None -sDEVICE=pdfwrite -sOutputFile=$@.part $^
 	mv $@.part $@
 
-qc/%.splice_events.pdf qc/%.splice_junction.pdf: gsnap/%.gsnap.filtered.bam ~/generic/data/rseqc/hg19_Ensembl.bed /home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages/RSeQC-2.3.9-py2.7-linux-x86_64.egg/qcmodule/SAM.py
+qc/%.splice_events.pdf qc/%.splice_junction.pdf: gsnap/%.gsnap.filtered.bam /mnt/projects/generic/data/rseqc/hg19_Ensembl.bed /home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages/RSeQC-2.3.9-py2.7-linux-x86_64.egg/qcmodule/SAM.py
 	mkdir -p qc
-	PYTHONPATH=$(PYTHONPATH) ~/tools/RSeQC-2.3.9/bin/junction_annotation.py -i $< -r ~/generic/data/rseqc/hg19_Ensembl.bed -o qc/$*
+	PYTHONPATH=$(PYTHONPATH) ~/tools/RSeQC-2.3.9/bin/junction_annotation.py -i $< -r /mnt/projects/generic/data/rseqc/hg19_Ensembl.bed -o qc/$*
 
 # ---
 
@@ -151,8 +151,8 @@ qc/allpatients.infer_experiment.txt: $(foreach S, $(SAMPLES), qc/$S.infer_experi
 	for S in $^ ; do echo $$S >> $@.part; cat $$S >> $@.part ; done
 	mv $@.part $@
 
-qc/%.infer_experiment.txt: gsnap/%.gsnap.filtered.bam ~/generic/data/rseqc/hg19_Ensembl.bed /home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages/RSeQC-2.3.9-py2.7-linux-x86_64.egg/qcmodule/SAM.py
+qc/%.infer_experiment.txt: gsnap/%.gsnap.filtered.bam /mnt/projects/generic/data/rseqc/hg19_Ensembl.bed /home/STANNANET/christian.frech/tools/RSeQC-2.3.9/lib/python2.7/site-packages/RSeQC-2.3.9-py2.7-linux-x86_64.egg/qcmodule/SAM.py
 	mkdir -p qc
-	PYTHONPATH=$(PYTHONPATH) ~/tools/RSeQC-2.3.9/bin/infer_experiment.py -i $< -r ~/generic/data/rseqc/hg19_Ensembl.bed > $@.part
+	PYTHONPATH=$(PYTHONPATH) ~/tools/RSeQC-2.3.9/bin/infer_experiment.py -i $< -r /mnt/projects/generic/data/rseqc/hg19_Ensembl.bed > $@.part
 	mv $@.part $@
 

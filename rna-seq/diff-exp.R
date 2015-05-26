@@ -66,7 +66,7 @@ res.df$id <- rownames(res.df)
 
 # annotate genes with Ensembl biomart
 #---
-biomartfile <- "~/generic/data/ensembl/genes.GRCh37v75.biomart.RData"
+biomartfile <- "/mnt/projects/generic/data/ensembl/genes.GRCh37v75.biomart.RData"
 if(file.exists(biomartfile)) {
 	load(biomartfile)
 } else {

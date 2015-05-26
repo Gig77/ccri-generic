@@ -41,7 +41,7 @@ option_list <- list(
 )
 opt <- parse_args(OptionParser(option_list=option_list))
 
-#opt <- data.frame('input-dir'="~/fikret/results/htseq", 'min-reads'= 3, 'y-max' = 35000, 'output-file'="~/fikret/results/htseq/coverage-saturation-curve.pdf", stringsAsFactors=F, check.names=F)
+#opt <- data.frame('input-dir'="/mnt/projects/fikret/results/htseq", 'min-reads'= 3, 'y-max' = 35000, 'output-file'="/mnt/projects/fikret/results/htseq/coverage-saturation-curve.pdf", stringsAsFactors=F, check.names=F)
 
 files <- list.files(path=opt$'input-dir', pattern=".subsamples.count$")
 files <- files[sapply(files, function(x) !is.null(sample2lab[[x]]))]

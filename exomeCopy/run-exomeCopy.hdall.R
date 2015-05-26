@@ -1,10 +1,10 @@
 library(exomeCopy)
 
-target.file <- "~/generic/data/illumina/truseq_exome_targeted_regions.hg19.bed.chr"
-#bam.files <- list.files(path="~/hdall/data/bam", pattern=".bam$", full.names=T)
-bam.files <- list.files(path="~/hdall/data/bam", pattern=".*(314|399|430|446|460|545|564|592|715|786|792|818|X|Y).*.bam$", full.names=T)
+target.file <- "/mnt/projects/generic/data/illumina/truseq_exome_targeted_regions.hg19.bed.chr"
+#bam.files <- list.files(path="/mnt/projects/hdall/data/bam", pattern=".bam$", full.names=T)
+bam.files <- list.files(path="/mnt/projects/hdall/data/bam", pattern=".*(314|399|430|446|460|545|564|592|715|786|792|818|X|Y).*.bam$", full.names=T)
 sample.names <- paste0("S", sub(".*/bam/(.+).merged.*", "\\1", bam.files))
-reference.file <- "~/generic/data/hg19/ucsc.hg19.fasta"
+reference.file <- "/mnt/projects/generic/data/hg19/ucsc.hg19.fasta"
 
 target.df <- read.delim(target.file, header = FALSE)
 target <- GRanges(seqname = target.df[, 1], IRanges(start = target.df[,2] + 1, end = target.df[, 3]))
