@@ -1,0 +1,132 @@
+//---------------------------------------------------------------------------------------------
+// Anduril script to create tab-separated, tabix-indexed file with RNA-seq variants found in normal control samples.
+// This file is used for variant filtering in other CCRI RNA-seq pipelines.
+// Normal control samples are currently derived from 36 bead-purified bone-marrow samples from Fikret's neuroblastoma DTC project 
+//   as well as 3 cell-sorted normal B-cells from Oskar's iAMP21 project
+// Note that variant calling is VERY liberal here, so you need to threshold the number of supporting reads and/or 
+//   variant allelic frequency when filtering based on these normal control variants  
+// Author: Christian Frech <frech.christian@gmail.com>
+//---------------------------------------------------------------------------------------------
+
+// prepare input files 
+// -------------------------
+
+referenceGenomeFasta = INPUT(path="/data_synology/anduril/docker-images/anduril-gsnap_2014_12_28-human_g1k_v37/db/human_g1k_v37/human_g1k_v37_etv6runx1.fasta") 
+gtf = INPUT(path="/mnt/projects/generic/data/ccri/Homo_sapiens.GRCh37.75.etv6runx1.gtf.gz")
+
+alignedBams = record()
+alignedBams["S1"] = "/mnt/projects/iamp/results/anduril/execute/gsnap_S1/S1.gsnap.sorted.dupmarked.bam"
+alignedBams["S2"] = "/mnt/projects/iamp/results/anduril/execute/gsnap_S2/S2.gsnap.sorted.dupmarked.bam"
+alignedBams["S3"] = "/mnt/projects/iamp/results/anduril/execute/gsnap_S3/S3.gsnap.sorted.dupmarked.bam"
+alignedBams["M-09-0606-11-R"] = "/mnt/projects/fikret/results/gsnap/M-09-0606-11-R.gsnap.filtered.bam"
+alignedBams["M-99-1650-04-Dx"] = "/mnt/projects/fikret/results/gsnap/M-99-1650-04-Dx.gsnap.filtered.bam"
+alignedBams["M-94-1911-33-R"] = "/mnt/projects/fikret/results/gsnap/M-94-1911-33-R.gsnap.filtered.bam"
+alignedBams["M-14-1234-12-R"] = "/mnt/projects/fikret/results/gsnap/M-14-1234-12-R.gsnap.filtered.bam"
+alignedBams["M-92-0825-25-R"] = "/mnt/projects/fikret/results/gsnap/M-92-0825-25-R.gsnap.filtered.bam"
+alignedBams["M-98-1897-13-R"] = "/mnt/projects/fikret/results/gsnap/M-98-1897-13-R.gsnap.filtered.bam"
+alignedBams["M-98-1261-02-Dx"] = "/mnt/projects/fikret/results/gsnap/M-98-1261-02-Dx.gsnap.filtered.bam"
+alignedBams["M-93-0644-06-Dx"] = "/mnt/projects/fikret/results/gsnap/M-93-0644-06-Dx.gsnap.filtered.bam"
+alignedBams["M-92-1283-10-Dx"] = "/mnt/projects/fikret/results/gsnap/M-92-1283-10-Dx.gsnap.filtered.bam"
+alignedBams["M-95-1415-31-Dx"] = "/mnt/projects/fikret/results/gsnap/M-95-1415-31-Dx.gsnap.filtered.bam"
+alignedBams["M-99-3072-24-R"] = "/mnt/projects/fikret/results/gsnap/M-99-3072-24-R.gsnap.filtered.bam"
+alignedBams["M-10-2326-20-R"] = "/mnt/projects/fikret/results/gsnap/M-10-2326-20-R.gsnap.filtered.bam"
+alignedBams["M-93-0849-10-R"] = "/mnt/projects/fikret/results/gsnap/M-93-0849-10-R.gsnap.filtered.bam"
+alignedBams["M-95-0614-08-R"] = "/mnt/projects/fikret/results/gsnap/M-95-0614-08-R.gsnap.filtered.bam"
+alignedBams["M-06-3040-29-Dx"] = "/mnt/projects/fikret/results/gsnap/M-06-3040-29-Dx.gsnap.filtered.bam"
+alignedBams["M-93-1141-07-R"] = "/mnt/projects/fikret/results/gsnap/M-93-1141-07-R.gsnap.filtered.bam"
+alignedBams["M-13-0131-14-R"] = "/mnt/projects/fikret/results/gsnap/M-13-0131-14-R.gsnap.filtered.bam"
+alignedBams["M-11-2208-18-R"] = "/mnt/projects/fikret/results/gsnap/M-11-2208-18-R.gsnap.filtered.bam"
+alignedBams["M-98-0062-22-R"] = "/mnt/projects/fikret/results/gsnap/M-98-0062-22-R.gsnap.filtered.bam"
+alignedBams["M-95-2120-06-R"] = "/mnt/projects/fikret/results/gsnap/M-95-2120-06-R.gsnap.filtered.bam"
+alignedBams["M-92-1182-33-Dx"] = "/mnt/projects/fikret/results/gsnap/M-92-1182-33-Dx.gsnap.filtered.bam"
+alignedBams["M-10-2922-23-R"] = "/mnt/projects/fikret/results/gsnap/M-10-2922-23-R.gsnap.filtered.bam"
+alignedBams["M-95-0029-01-Dx"] = "/mnt/projects/fikret/results/gsnap/M-95-0029-01-Dx.gsnap.filtered.bam"
+alignedBams["M-10-0681-28-Dx"] = "/mnt/projects/fikret/results/gsnap/M-10-0681-28-Dx.gsnap.filtered.bam"
+alignedBams["M-92-0551-07-Dx"] = "/mnt/projects/fikret/results/gsnap/M-92-0551-07-Dx.gsnap.filtered.bam"
+alignedBams["M-94-0919-05-Dx"] = "/mnt/projects/fikret/results/gsnap/M-94-0919-05-Dx.gsnap.filtered.bam"
+alignedBams["M-07-0342-19-R"] = "/mnt/projects/fikret/results/gsnap/M-07-0342-19-R.gsnap.filtered.bam"
+alignedBams["M-11-4162-34-R"] = "/mnt/projects/fikret/results/gsnap/M-11-4162-34-R.gsnap.filtered.bam"
+alignedBams["M-13-2083-15-R"] = "/mnt/projects/fikret/results/gsnap/M-13-2083-15-R.gsnap.filtered.bam"
+alignedBams["M-12-2162-16-R"] = "/mnt/projects/fikret/results/gsnap/M-12-2162-16-R.gsnap.filtered.bam"
+alignedBams["M-93-0612-08-Dx"] = "/mnt/projects/fikret/results/gsnap/M-93-0612-08-Dx.gsnap.filtered.bam"
+alignedBams["M-02-0103-21-R"] = "/mnt/projects/fikret/results/gsnap/M-02-0103-21-R.gsnap.filtered.bam"
+alignedBams["M-95-2120-06-R-2"] = "/mnt/projects/fikret/results/gsnap/M-95-2120-06-R-2.gsnap.filtered.bam"
+alignedBams["M-03-4304-03-Dx"] = "/mnt/projects/fikret/results/gsnap/M-03-4304-03-Dx.gsnap.filtered.bam"
+alignedBams["M-95-0581-27-Dx"] = "/mnt/projects/fikret/results/gsnap/M-95-0581-27-Dx.gsnap.filtered.bam"
+alignedBams["M-98-1987-30-Dx"] = "/mnt/projects/fikret/results/gsnap/M-98-1987-30-Dx.gsnap.filtered.bam"
+
+// in addition, we create a BAM file that combines all normal controls into a single large file
+// this has the advantage that rare artifacts accumulate a sufficient number of reads to be detected
+// two BAM files had to be excluded b/c samtools merge complains that they contain different sequence headers
+// --> probably they were aligned using an older reference genome without the etv6runx1 and/or moloney leukemia virus genome
+// also older version of samtools was used for merge b/c samtools 1.2 segfaults
+
+// BASH CODE (not andurilized yet):
+/*
+  find /mnt/projects/fikret/results/gsnap/ -name "M*.bam" > /mnt/projects/generic/data/ccri/rnaseq-normal-controls.bamlist.txt
+  find /mnt/projects/iamp/results/gsnap/ -name "C57C3ACXX_CV_S*.bam" >> /mnt/projects/generic/data/ccri/rnaseq-normal-controls.bamlist.txt
+  /data_synology/software/samtools-0.1.19/samtools merge -f -@ 15 /mnt/projects/generic/data/ccri/rnaseq-normal-controls.bam \
+    $(cat /mnt/projects/generic/data/ccri/rnaseq-normal-controls.bamlist.txt | grep -vP '(M-93-0644-06-Dx|M-94-0919-05-Dx)' | tr '\n' ' ')
+  samtools index /mnt/projects/generic/data/ccri/rnaseq-normal-controls.bam
+*/
+
+alignedBams["combined"] = "/mnt/projects/generic/data/ccri/rnaseq-normal-controls.bam"
+
+// call variants with VarScan and convert VCF output to tab-separated file 
+// -------------------------
+
+tsvs = record()
+for sample, file : alignedBams 
+{		
+	@out.optOut1.filename = sample + '.varscan.vcf'
+	varscan = BashEvaluate
+	(
+		var1       = INPUT(path=file),
+		var2       = referenceGenomeFasta,
+		var3       = gtf,
+		echoStdOut = true,
+		script = '''
+			set -o pipefail
+			set -ex
+			rm -f @optOut1@
+			java -XX:+UseParallelGC -XX:ParallelGCThreads=8 -jar /data_synology/software/varscan-2.3.6/VarScan.v2.3.6.jar mpileup2cns \
+				<(samtools mpileup -q 30 --excl-flags 3844 -l <(zcat @var3@ | grep -P "\tCDS\t" | cut -f 1,4,5 | sort | uniq) -f @var2@ @var1@) \
+				--min-coverage 2 --min-reads2 2 --min-avg-qual 24 --min-var-freq 0 --min-freq-for-hom 0.75 --p-value 1 --strand-filter 0 --output-vcf 1 --variants 1 \
+				> @optOut1@.part
+			mv @optOut1@.part @optOut1@
+		''',
+		@name      = "varscan_" + std.strReplace(sample, '-', '_'),
+		@cpu       = 2,
+		@memory    = 1000,
+		@execute   = "once"
+	)
+	
+	@out.optOut1.filename = sample + '.variants.tsv'
+	tsv = BashEvaluate
+	(
+		var1     = varscan.optOut1,
+		echoStdOut = true,
+		script     = '''
+			set -ex
+			perl /mnt/projects/generic/scripts/rnaseq-controls/vcf2tsv.pl --sample ''' + sample + ''' --vcf-in @var1@ > @optOut1@ 
+		''',
+		@name      = "tsv_" + std.strReplace(sample, '-', '_')
+	)
+	tsvs[sample] = tsv.optOut1
+}
+
+// combine tsv files and tabix for fast random access
+// -------------------------
+
+@out.optOut1.filename = 'rnaseq-control-variants.tsv.gz'
+rnaseqControlVariants = BashEvaluate
+(
+	array1     = std.makeArray(tsvs),
+	echoStdOut = true,
+	script     = '''
+		set -o pipefail
+		set -ex
+		cat $( getarrayfiles array1 ) | sort -k 2,2 -k 3,3n | bgzip -c > @optOut1@
+		tabix -s 2 -b 3 -e 3 @optOut1@ 
+	'''
+)

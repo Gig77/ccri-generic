@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -x
+
+# gracefully shutdown rstudio server
+
+docker exec rstudio rstudio-server suspend-all
+docker exec rstudio rstudio-server stop
+
+# restart docker
+
+cd /data_synology/anduril/docker-images/rstudio
+docker stop rstudio && docker rm rstudio
+docker build -t cfrech/rstudio . && \
+docker run -d -p 8787:8787 --name=rstudio \
+  -v /home/cf:/home/anduril \
+  -v /data_synology/christian/iamp/data/current:/mnt/projects/iamp/data:rw \
+  -v /data_synology/christian/iamp/scripts:/mnt/projects/iamp/scripts:rw \
+  -v /home/cf/iamp/results/current:/mnt/projects/iamp/results:rw \
+  -v /home/cf/sarah/results/current:/mnt/projects/sarah/results:rw \
+  -v /mnt/biowaste/data/christian/sarah/data/current:/mnt/projects/sarah/data:ro \
+  -v /home/cf/helena_veronika/results/current:/mnt/projects/helena_veronika/results:rw \
+  -v /data_synology/christian/helena_veronika/data:/mnt/projects/helena_veronika/data:ro \
+  -v /data_synology/christian/generic/data/current:/mnt/projects/generic/data:rw \
+  -v /data_synology/christian/generic/scripts:/mnt/projects/generic/scripts:rw \
+  -v /data_synology/anduril/anduril-bundles:/usr/local/share/anduril-bundles:rw \
+  -v /data_synology:/data_synology:rw \
+  cfrech/rstudio
