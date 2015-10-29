@@ -6,7 +6,7 @@ option_list <- list(
 		make_option("--sample", type="character", help="sample name")
 		)
 opt <- parse_args(OptionParser(option_list=option_list))
-#opt <- data.frame(sample="DL2C", stringsAsFactors=F)
+#opt <- data.frame(sample="m1060-108-rel", stringsAsFactors=F)
 
 if (invalid(opt$sample)) stop("sample not specified")
 

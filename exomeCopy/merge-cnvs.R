@@ -23,7 +23,7 @@ const.tri21 <- which(seqnames(gr)=="21" & grepl("C$", gr$sample.name, perl=T) & 
 o <- o[!(o@queryHits %in% const.tri21) & !(o@subjectHits %in% const.tri21)]
 
 # remove overlaps with crappy samples
-crappy <- c("242C", "GI8R", "MA5R", "HV57R", "KE17247R")
+crappy <- c("242C", "GI8R", "MA5R", "HV57R", "KE17247R", "S23R3", "m248-841-dia", "m247-833-dia", "m252-379-dia", "m1059-92-dia", "m1060-108-rel", "m1069-737-rel", "m1035-108-dia", "m1037-839-dia", "m1041-737-dia")
 o <- o[!(gr$sample.name[o@subjectHits] %in% crappy),]
 o <- o[!(seqnames(gr)[o@subjectHits] %in% c("X","Y") & gr$sample.name[o@subjectHits] %in% c("GI8C")),] # GI8C gives weird results for sex chromosomes...
 
