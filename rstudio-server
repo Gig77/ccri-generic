@@ -42,6 +42,8 @@ docker run -d -p 8787:8787 --name=rstudio \
   -v /home/cf/martin/results/current:/mnt/projects/martin/results:rw \
   -v /data_synology/christian/martin/data:/mnt/projects/martin/data:ro \
   -v /data_synology/christian/ikaros/scripts:/mnt/projects/ikaros/scripts:rw \
+  -v /data_synology/christian/ikaros/anduril:/mnt/projects/ikaros/anduril:rw \
+  -v /data_synology/christian/fikret/scripts:/mnt/projects/fikret/scripts:rw \
   -v /home/cf/ikaros/results/current:/mnt/projects/ikaros/results:rw \
   -v /data_synology/christian/ikaros/data:/mnt/projects/ikaros/data:ro \
   -v /data_synology:/data_synology:rw \

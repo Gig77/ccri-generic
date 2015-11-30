@@ -295,6 +295,13 @@ while (<IN>) {
 }
 close(IN);
 
+open(IN, "/mnt/projects/generic/data/ccri/ccri_literature_curated_genesets_gsea.gmt") or die "ERROR: Could not read input.\n";
+while (<IN>) {
+	my ($gs) = split /\t/;
+	print OUT uc($gs),"\tCUSTOM\t\t\n";
+}
+close(IN);
+
 close(OUT);
 
 print "Success. Output written to $outfile\n"; 
