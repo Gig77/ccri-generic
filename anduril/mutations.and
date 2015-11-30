@@ -48,7 +48,7 @@ function MutationReport
 				set -o pipefail
 				set -ex
 				rm -f @optOut1@
-				/usr/lib/jvm/java-1.7.0-openjdk-amd64/jre/bin/java -jar /data_synology/software/snpeff-3.6/SnpSift.jar annotate \
+				/usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java -jar /data_synology/software/snpeff-3.6/SnpSift.jar annotate \
 					-v /mnt/projects/generic/data/ncbi/common_no_known_medical_impact_20140826.vcf \
 					@var1@ \
 					> @optOut1@.part
@@ -68,7 +68,7 @@ function MutationReport
 				set -o pipefail
 				set -ex
 				rm -f @optOut1@
-				/usr/lib/jvm/java-1.7.0-openjdk-amd64/jre/bin/java -Xmx4g -jar /data_synology/software/snpeff-3.6/snpEff.jar -v -lof -canon GRCh37.75 \
+				/usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java -Xmx4g -jar /data_synology/software/snpeff-3.6/snpEff.jar -v -lof -canon GRCh37.75 \
 					-stats @optOut2@ \
 					@var1@ \
 					> @optOut1@.part
@@ -88,7 +88,7 @@ function MutationReport
 				set -o pipefail
 				set -ex
 				rm -f @optOut1@
-				/usr/lib/jvm/java-1.7.0-openjdk-amd64/jre/bin/java -jar /data_synology/software/snpeff-3.6/SnpSift.jar dbnsfp \
+				/usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java -jar /data_synology/software/snpeff-3.6/SnpSift.jar dbnsfp \
 					-v /mnt/projects/generic/data/dbNSFP-2.6/dbNSFP2.6_variant.tsv.gz \
 					-collapse \
 					-f SIFT_pred,SIFT_score,Polyphen2_HVAR_pred,Polyphen2_HVAR_score,SiPhy_29way_logOdds,LRT_pred,LRT_score,MutationTaster_pred,MutationTaster_score,MutationAssessor_pred,MutationAssessor_score,FATHMM_pred,FATHMM_score,RadialSVM_pred,RadialSVM_score,GERP++_RS,1000Gp1_AF,1000Gp1_AFR_AF,1000Gp1_EUR_AF,1000Gp1_AMR_AF,1000Gp1_ASN_AF,ESP6500_AA_AF,ESP6500_EA_AF,Uniprot_acc,Interpro_domain, \
@@ -97,6 +97,7 @@ function MutationReport
 				mv @optOut1@.part @optOut1@
 			''',
 			@name      = "dbnsfp_" + std.strReplace(sample, '-', '_'),
+			@memory    = 4000,
 			@enabled   = runMutations
 		)
 
