@@ -28,24 +28,21 @@ o <- o[!(gr$sample.name[o@subjectHits] %in% crappy),]
 o <- o[!(seqnames(gr)[o@subjectHits] %in% c("X","Y") & gr$sample.name[o@subjectHits] %in% c("GI8C")),] # GI8C gives weird results for sex chromosomes...
 
 # determine overlap in percent of shared exons
+# to be considered same event, we require overlap of at least 30% (intersection divided by union)
 ex <- read.delim("/mnt/projects/generic/data/illumina/nexterarapidcapture_exome_targetedregions.nochr.bed", header=F)
 er <- GRanges(seqnames=ex$V1, ranges=IRanges(start=ex$V2, end=ex$V3))
 oex <- findOverlaps(gr, er)
 segex <- cast(as.data.frame(oex), formula=queryHits~., value="subjectHits", fun.aggregate=function(x) { paste(x, collapse=",") })
-names(segex) <- c("subjectHits", "subjectExons")
-om <- merge(as.data.frame(o), segex)
-names(segex) <- c("queryHits", "queryExons")
-om <- merge(om, segex)
-om <- om[order(om$queryHits, om$subjectHits),]
-o@metadata[["pct_shared_exons"]] <- apply(om, 1, function(x) { qex <- unlist(strsplit(x["queryExons"], ",", fixed=T)) ; sex <- unlist(strsplit(x["subjectExons"], ",", fixed=T)) ; length(intersect(qex, sex)) / length(union(qex, sex)) })
-o <- o[o@metadata[["pct_shared_exons"]] >= 0.3]
-
-# to be considered same event, we require overlap of at least 30% (intersection divided by union)
-#qr <- gr[o@queryHits]@ranges
-#sr <- gr[o@subjectHits]@ranges
-#o@metadata[["width"]] <- (pmin(end(qr), end(sr))-pmax(start(qr), start(sr))+1) / (pmax(end(qr), end(sr))-pmin(start(qr), start(sr))+1)
-#o@metadata[["pct_shared_exons"]] <- (pmin(end(qr), end(sr))-pmax(start(qr), start(sr))+1) / (pmax(end(qr), end(sr))-pmin(start(qr), start(sr))+1)
-#o <- o[o@metadata[["width"]] >= 0.3]
+names(segex) <- c("segidx", "exons")
+om <- as.data.frame(o)
+om$queryExons <- segex$exons[match(om$queryHits, segex$segidx)]
+om$subjectExons <- segex$exons[match(om$subjectHits, segex$segidx)]
+pct.overlap <- apply(om, 1, function(x) { 
+  qex <- unlist(strsplit(x["queryExons"], ",", fixed=T)) ; 
+  sex <- unlist(strsplit(x["subjectExons"], ",", fixed=T)) ; 
+  length(intersect(qex, sex)) / length(union(qex, sex)) 
+  })
+o <- o[pct.overlap >= 0.3]
 
 gr$overlap.samples <- as.character(NA)
 gr$overlap.count <- as.integer(NA)
