@@ -6,7 +6,7 @@ option_list <- list(
 		make_option("--sample", type="character", help="sample name")
 		)
 opt <- parse_args(OptionParser(option_list=option_list))
-#opt <- data.frame(sample="m1060-108-rel", stringsAsFactors=F)
+#opt <- data.frame(sample="737D", stringsAsFactors=F)
 
 if (invalid(opt$sample)) stop("sample not specified")
 
@@ -55,7 +55,9 @@ if (invalid(sex)) stop(sprintf("ERROR: could not determine sex of patient %s (sa
 load("counts.bg.RData")
 
 # remove outliers; gives more robust parameter optimization results
-counts <- counts[counts[["bg.var"]]>quantile(counts[["bg.var"]], 0.01) & counts[["bg.var"]]<quantile(counts[["bg.var"]], 0.99),]
+exclude <- counts[["bg.var"]] <= quantile(counts[["bg.var"]], 0.01) | counts[["bg.var"]] >= quantile(counts[["bg.var"]], 0.99)
+exclude[seqnames(counts) == "7" & start(counts) == 50467615] <- FALSE  # keep last exon of IKZF1 for plotting!
+counts <- counts[!exclude,]
 #counts <- counts[counts[["bg.var"]]>0.001 & counts[["bg.var"]]<0.2,]
 
 # alternative: exclude sex chromosomes because they will have high variability due to sex differences of samples
@@ -130,6 +132,9 @@ for (chr in c("1", "2", "3", "7", "11", "12", "13", "X", "Y")) {
 		fit[[opt$sample]][[chr]] <- splitted[[1]]
 	}
 }
+
+# save fit
+save(fit, file=paste0("/mnt/projects/p2ry8-crlf2/results/exomeCopy/", opt$sample, ".exomeCopy.fit.RData"))
 
 # plot results
 pdf(paste0(opt$sample, ".combined.pdf"), width=15, height=7)
