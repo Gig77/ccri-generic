@@ -14,21 +14,22 @@ docker stop rstudio && docker rm rstudio
 docker build -t cfrech/rstudio . && \
 docker run -d -p 8787:8787 --name=rstudio \
   -v /home/cf:/home/anduril \
-  -v /mnt/biowaste/data/christian/hdall/data/current:/mnt/projects/hdall/data:ro \
-  -v /mnt/biowaste/data/christian/hdall/results/current:/mnt/projects/hdall/results:rw \
+  -v /data_synology/christian/hdall/data/current:/mnt/projects/hdall/data:ro \
+  -v /data_synology/christian/hdall/results/current:/mnt/projects/hdall/results:rw \
+  -v /data_synology/christian/hdall/scripts:/mnt/projects/hdall/scripts:rw \
   -v /data_synology/christian/iamp/data/current:/mnt/projects/iamp/data:rw \
   -v /data_synology/christian/iamp/scripts:/mnt/projects/iamp/scripts:rw \
   -v /data_synology/christian/iamp/anduril:/mnt/projects/iamp/anduril:rw \
-  -v /home/cf/iamp/results/current:/mnt/projects/iamp/results:rw \
-  -v /home/cf/sarah/results/current:/mnt/projects/sarah/results:rw \
-  -v /mnt/biowaste/data/christian/sarah/data/current:/mnt/projects/sarah/data:ro \
-  -v /home/cf/helena_veronika/results/current:/mnt/projects/helena_veronika/results:rw \
+  -v /data_synology/christian/iamp/results/current:/mnt/projects/iamp/results:rw \
+  -v /data_synology/christian/sarah/results/current:/mnt/projects/sarah/results:rw \
+  -v /data_synology/christian/sarah/data/current:/mnt/projects/sarah/data:ro \
+  -v /data_synology/christian/helena_veronika/results/current:/mnt/projects/helena_veronika/results:rw \
   -v /data_synology/christian/helena_veronika/data:/mnt/projects/helena_veronika/data:ro \
   -v /data_synology/christian/generic/data/current:/mnt/projects/generic/data:rw \
   -v /data_synology/christian/generic/scripts:/mnt/projects/generic/scripts:rw \
   -v /data_synology/anduril/anduril-bundles:/usr/local/share/anduril-bundles:rw \
-  -v /mnt/biowaste/data/christian/chrisi/results/current:/mnt/projects/chrisi/results:rw \
-  -v /mnt/biowaste/data/christian/chrisi/data/current:/mnt/projects/chrisi/data:ro \
+  -v /data_synology/christian/chrisi/results/current:/mnt/projects/chrisi/results:rw \
+  -v /data_synology/christian/chrisi/data/current:/mnt/projects/chrisi/data:ro \
   -v /data_synology/christian/p2ry8-crlf2/scripts:/mnt/projects/p2ry8-crlf2/scripts:rw \
   -v /mnt/biowaste/data2/christian.frech/p2ry8-crlf2/data/current:/mnt/projects/p2ry8-crlf2/data:ro \
   -v /mnt/biowaste/data2/christian.frech/p2ry8-crlf2/results/current:/mnt/projects/p2ry8-crlf2/results:rw \
@@ -48,10 +49,14 @@ docker run -d -p 8787:8787 --name=rstudio \
   -v /data_synology/christian/ikaros/scripts:/mnt/projects/ikaros/scripts:rw \
   -v /data_synology/christian/ikaros/anduril:/mnt/projects/ikaros/anduril:rw \
   -v /data_synology/christian/ikaros/data:/mnt/projects/ikaros/data:ro \
+  -v /home/cf/ikaros/results/current:/mnt/projects/ikaros/results:rw \
   -v /home/cf/fikret/results/current:/mnt/projects/fikret/results:rw \
   -v /data_synology/christian/fikret/data/current:/mnt/projects/fikret/data:ro \
   -v /data_synology/christian/fikret/scripts:/mnt/projects/fikret/scripts:rw \
   -v /data_synology/christian/fikret/anduril:/mnt/projects/fikret/anduril:rw \
+  -v /home/cf/magdalena/results:/mnt/projects/magdalena/results:rw \
+  -v /data_synology/christian/magdalena/data:/mnt/projects/magdalena/data:ro \
+  -v /data_synology/christian/magdalena/scripts:/mnt/projects/magdalena/scripts:rw \
   -v /home/cf/schwann/results/current:/mnt/projects/schwann/results:rw \
   -v /data_synology/christian/schwann/data:/mnt/projects/schwann/data:ro \
   -v /data_synology/christian/schwann/scripts:/mnt/projects/schwann/scripts:rw \
@@ -60,6 +65,11 @@ docker run -d -p 8787:8787 --name=rstudio \
   -v /data_synology/christian/kasia/data/current:/mnt/projects/kasia/data:ro \
   -v /data_synology/christian/kasia/scripts:/mnt/projects/kasia/scripts:rw \
   -v /data_synology/christian/kasia/anduril:/mnt/projects/kasia/anduril:rw \
-  -v /home/cf/ikaros/results/current:/mnt/projects/ikaros/results:rw \
-  -v /data_synology:/data_synology:rw \
+  -v /data_synology/christian/jaffa/data:/mnt/projects/jaffa/data:ro \
+  -v /data_synology/christian/jaffa/scripts:/mnt/projects/jaffa/scripts:rw \
+  -v /home/cf/jaffa/results/current:/mnt/projects/jaffa/results:rw \
+  -v /data_synology/max/zohre:/mnt/projects/zohre/data:ro \
+  -v /data_synology/christian/zohre/scripts:/mnt/projects/zohre/scripts:rw \
+  -v /home/cf/zohre/results:/mnt/projects/zohre/results:rw \
+  -v /data_synology_nfs:/data_synology:rw \
   cfrech/rstudio
