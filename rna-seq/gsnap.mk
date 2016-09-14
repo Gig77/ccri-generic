@@ -8,7 +8,7 @@ gsnap: $(foreach S, $(SAMPLES), gsnap/$S.gsnap.bam)
 # cd /mnt/projects/chrisi/data/gsnap
 # ~/tools/gmap-2014-05-15/util/gmap_build -d g1k_v37 /mnt/projects/generic/data/broad/human_g1k_v37.fasta
 # cat /mnt/projects/generic/data/broad/human_g1k_v37.fasta /mnt/projects/chrisi/results/etv6-runx1.breakpoint.fa /mnt/projects/generic/data/ncbi/NC_001501_moloney_murine_leukemia_virus.fasta > /mnt/projects/chrisi/data/gsnap/human_g1k_v37_etv6runx1.fasta 
-# ~/tools/gmap-2014-05-15/bin/gmap_build --dir=/data/christian/chrisi/data/current/gsnap --db=g1k_v37_etv6runx1 --circular MT,NC_001501.1 /mnt/projects/chrisi/data/gsnap/human_g1k_v37_etv6runx1.fasta
+# ~/tools/gmap-2014-05-15/bin/gmap_build --dir=/mnt/projects/chrisi/data/gsnap --db=g1k_v37_etv6runx1 --circular MT,NC_001501.1 /mnt/projects/chrisi/data/gsnap/human_g1k_v37_etv6runx1.fasta
 # rm /mnt/projects/chrisi/data/gsnap/human_g1k_v37_etv6runx1.fasta
 #
 # gunzip -c snp138.txt.gz | ~/tools/gmap-2014-05-15/bin/dbsnp_iit -w 1 > g1k_v37.snp138.txt
@@ -27,7 +27,7 @@ gsnap/%.gsnap.bam: $(PROJECT_HOME)/data/bam/%.bam
 	mkdir -p gsnap
 	flock -x .lock ~/tools/gmap-2014-05-15/src/gsnap \
 			--db=g1k_v37_etv6runx1 \
-			--dir=/data/christian/chrisi/data/current/gsnap/g1k_v37_etv6runx1 \
+			--dir=/mnt/projects/chrisi/data/gsnap/g1k_v37_etv6runx1 \
 			--format=sam \
 			--npaths=1 \
 			--max-mismatches=1 \
