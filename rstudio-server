@@ -57,7 +57,7 @@ docker run -d -p 8787:8787 --name=rstudio \
   -v /home/cf/magdalena/results:/mnt/projects/magdalena/results:rw \
   -v /data_synology/christian/magdalena/data:/mnt/projects/magdalena/data:ro \
   -v /data_synology/christian/magdalena/scripts:/mnt/projects/magdalena/scripts:rw \
-  -v /home/cf/schwann/results/current:/mnt/projects/schwann/results:rw \
+  -v /data_synology/christian/schwann/results/current:/mnt/projects/schwann/results:rw \
   -v /data_synology/christian/schwann/data:/mnt/projects/schwann/data:ro \
   -v /data_synology/christian/schwann/scripts:/mnt/projects/schwann/scripts:rw \
   -v /data_synology/christian/schwann/anduril:/mnt/projects/schwann/anduril:rw \
